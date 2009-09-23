@@ -1,0 +1,16 @@
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\WindowsFormsApplication2.exe
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\WindowsFormsApplication2.pdb
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\Cortex.Form1.resources
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\Cortex.Properties.Resources.resources
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\CortexView.csproj.GenerateResource.Cache
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.exe
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.pdb
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexView\obj\Debug\WindowsFormsApplication2.exe
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexView\obj\Debug\WindowsFormsApplication2.pdb
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexView\bin\Debug\WindowsFormsApplication2.exe
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexView\bin\Debug\WindowsFormsApplication2.pdb
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexView\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexView\obj\Debug\Cortex.Form1.resources
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexView\obj\Debug\Cortex.Properties.Resources.resources
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexView\obj\Debug\CortexView.csproj.GenerateResource.Cache

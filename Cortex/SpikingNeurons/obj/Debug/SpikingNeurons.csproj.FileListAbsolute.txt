@@ -1,0 +1,5 @@
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\SpikingNeurons\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\SpikingNeurons\bin\Debug\SpikingCortex.dll
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\SpikingNeurons\bin\Debug\SpikingCortex.pdb
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\SpikingNeurons\obj\Debug\SpikingCortex.dll
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\SpikingNeurons\obj\Debug\SpikingCortex.pdb

@@ -1,0 +1,14 @@
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\FabricViewer.baml
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\FabricViewer.g.cs
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\App.g.cs
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\CortexViewer_MarkupCompile.cache
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\CortexViewer.g.resources
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\CortexViewer.csproj.GenerateResource.Cache
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\CortexViewer.Properties.Resources.resources
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\bin\Debug\CortexViewer.exe
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\bin\Debug\CortexViewer.pdb
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\bin\Debug\SpikingCortex.dll
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\bin\Debug\SpikingCortex.pdb
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\CortexViewer.exe
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\Cortex\CortexViewer\obj\Debug\CortexViewer.pdb

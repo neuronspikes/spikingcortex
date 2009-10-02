@@ -1,0 +1,18 @@
+C:\Documents and Settings\sdenis\Mes documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\sdenis\Mes documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.Form1.resources
+C:\Documents and Settings\sdenis\Mes documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.Properties.Resources.resources
+C:\Documents and Settings\sdenis\Mes documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.csproj.GenerateResource.Cache
+C:\Documents and Settings\sdenis\Mes documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\bin\Debug\TestVisionCS.exe
+C:\Documents and Settings\sdenis\Mes documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\bin\Debug\TestVisionCS.pdb
+C:\Documents and Settings\sdenis\Mes documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.exe
+C:\Documents and Settings\sdenis\Mes documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.pdb
+C:\Documents and Settings\sdenis\Mes documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\bin\Debug\WebCamLib.dll
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.exe
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.pdb
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\bin\Debug\TestVisionCS.exe
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\bin\Debug\TestVisionCS.pdb
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\bin\Debug\WebCamLib.dll
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.Form1.resources
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.Properties.Resources.resources
+C:\Users\sdenis.NOAM\Documents\Visual Studio 2008\Projects\TestVisionCS\TestVisionCS\obj\Debug\TestVisionCS.csproj.GenerateResource.Cache

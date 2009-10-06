@@ -52,6 +52,8 @@ namespace CortexViewer
                 rawImage, rawStride);
 
             this.bitmap = new WriteableBitmap(bitmapSrc);
+            bitmap.Lock();
+            bitmap.Unlock();
             updateImage();
         }
 
@@ -101,6 +103,7 @@ namespace CortexViewer
         public long updateImage()
         {
             long coverage = 0;
+            lock(bitmap){
             if (neuronList == null)// no data!
             {
                 if (bitmap != null)
@@ -127,6 +130,7 @@ namespace CortexViewer
 
             }
             return coverage;
+        }
         }
     }
 }

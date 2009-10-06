@@ -8,7 +8,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 
 using System.Windows.Input;
-
+using System.Threading;
 
 
 
@@ -21,24 +21,26 @@ namespace CortexViewer
     /// </summary>
     public partial class FabricViewer : Window
     {
-        PictureNeuronStates input, output, fabric;
-        
+
+        Simulation simulation;
+       
         public FabricViewer()
         {
             InitializeComponent();
 
-            input = new PictureNeuronStates(10, 200, null);
-            output = new PictureNeuronStates(10, 200, null);
-            fabric = new PictureNeuronStates(10, 200, null);
-            
-            fabricInputImage.Source=input.Bitmap;
-            fabricOutputImage.Source = output.Bitmap;
-            fabricSetImage.Source = fabric.Bitmap;
+            // pre initialization
+            simulation = new Simulation(Dispatcher);
+
+  
+            // bind moving image sources
+            fabricInputImage.Source = simulation.input.Bitmap;
+            fabricOutputImage.Source = simulation.output.Bitmap;
+            fabricSetImage.Source = simulation.fabric.Bitmap;
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
-           // if(input!= null)this.fabric.updateImage();
+      
         }
 
         private void fabricInputImage_ImageFailed(object sender, ExceptionRoutedEventArgs e)
@@ -53,7 +55,15 @@ namespace CortexViewer
 
         private void Window_MouseMove_1(object sender, MouseEventArgs e)
         {
-            if (input != null) this.fabric.updateImage();
+            // bind moving image sources
+            fabricInputImage.Source = simulation.input.Bitmap;
+            fabricOutputImage.Source = simulation.output.Bitmap;
+            fabricSetImage.Source = simulation.fabric.Bitmap;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            simulation.stop = true;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace SpikingNeurons
     ///<!-- /Creative Commons License -->
 
     /// </summary>
-    public class SpikingNeuron
+    public class SpikingNeuron : SpikingThing
     {
         Fabric fabric;
 
@@ -34,12 +34,6 @@ namespace SpikingNeurons
             get { return state; }
         }
 
-        private bool spiked;
-
-        public bool Spiked
-        {
-            get { return spiked; }
-        }
 
         /// <summary>
         /// constructor
@@ -168,6 +162,19 @@ namespace SpikingNeurons
                 else Console.WriteLine("WARNING : Contradiction on applying inhibition from " + this
                     + " to " + n + " , which is an exitation relationship. Change not applied.");
             }
+
         }
+
+        /// <summary>
+        /// Transmit charges to efferent neurons
+        /// </summary>
+        public void spike(){
+            foreach (SpikingNeuron n in efferentSynapses.Keys)
+            {
+                // TODO: optimize to avoid this lookup
+                n.state += efferentSynapses[n];
+            }
+        }
+
     }
 }

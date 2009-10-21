@@ -29,36 +29,13 @@ namespace CortexViewer
             InitializeComponent();
 
             // pre initialization
-            simulation = new Simulation(Dispatcher);
+            simulation = new Simulation(this);
 
   
             // bind moving image sources
-            fabricInputImage.Source = simulation.input.Bitmap;
-            fabricOutputImage.Source = simulation.output.Bitmap;
-            fabricSetImage.Source = simulation.fabric.Bitmap;
-        }
-
-        private void Window_MouseMove(object sender, MouseEventArgs e)
-        {
-      
-        }
-
-        private void fabricInputImage_ImageFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-
-        }
-
-        private void fabricInputImage_ImageFailed_1(object sender, ExceptionRoutedEventArgs e)
-        {
-
-        }
-
-        private void Window_MouseMove_1(object sender, MouseEventArgs e)
-        {
-            // bind moving image sources
-            fabricInputImage.Source = simulation.input.Bitmap;
-            fabricOutputImage.Source = simulation.output.Bitmap;
-            fabricSetImage.Source = simulation.fabric.Bitmap;
+            fabricInputImage.Source = simulation.inputPicture.Bitmap;
+            fabricOutputImage.Source = simulation.outputPicture.Bitmap;
+            fabricSetImage.Source = simulation.fabricPicture.Bitmap;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

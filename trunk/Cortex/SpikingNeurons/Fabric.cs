@@ -18,7 +18,7 @@ namespace SpikingNeurons
     ///This software is licensed under the <a href="http://creativecommons.org/licenses/GPL/2.0/">CC-GNU GPL</a> version 2.0 or later.
     ///<!-- /Creative Commons License -->
     /// </summary>
-    public class Fabric
+    public class Fabric : Fibre 
     {
         /// <summary>
         /// Default constructor. 
@@ -26,14 +26,14 @@ namespace SpikingNeurons
         /// SpikeEffect=0 : Complete reset
         /// Leak=1 : No leak
         /// 
-        /// No size constraint >> Be carefull, your computer can die!
+        /// No size constraint >> Be careful, your computer can die!
         /// </summary>
         /// <param name="name">Unique name of this neuron fabric</param>
         public Fabric(string name)
         {
             this.name = name;
             neurons = new HashSet<SpikingNeuron>();
-            inputs = new Dictionary<Int32, SpikingNeuron>();
+            inputs = new Dictionary<string,InputFibre>();
             outputs = new Dictionary<Int32, SpikingNeuron>();
 
             treshold = 1;
@@ -41,14 +41,7 @@ namespace SpikingNeurons
             leak = 1; // neurons have no leak
         }
 
-        /// <summary>
-        /// ReadOnly 
-        /// </summary>
-        public string Name
-        {
-            get { return name; }
-        }
-        private string name;
+
 
         /// <summary>
         /// characteristics of constituants neurons
@@ -97,41 +90,32 @@ namespace SpikingNeurons
         }
         private double leak;
 
-        /// <summary>
-        /// Limit the resources allocated to this fabric.
-        /// This is the maximum number of neuron this fabric can handle.
-        /// 
-        /// This constraint have an impact on the quality of learning by 
-        /// imposing natural selection or encouraging diversity.
-        /// </summary>
-        public int SizeConstraint
-        {
-            get { return sizeConstraint; }
-            set { sizeConstraint = value; }
-        }
-        private int sizeConstraint;
-
-        // internal workset of neurons
+        // internal workset of neurons, may contains neurons from other fabric (inputs)
         private HashSet<SpikingNeuron> neurons;
 
-        // exposed input worksets
-        private Dictionary<Int32, SpikingNeuron> inputs;
+        // input interfaces
+        private Dictionary<string, InputFibre> inputs;
+        /// <summary>
+        /// Inputs are bound to a set of dedicated neurons to have 
+        /// efferent connections in the fabric. These neurons are spiked by their input
+        /// </summary>
+        /// <param name="input"></param>
+        public void connectInputFibre(InputFibre input){
+            inputs.Add(input.Name, input);
 
-        public void addInput(Int32 key, SpikingNeuron n)
-        {
-            neurons.Add(n);
-            inputs.Add(key, n);
+            foreach(SpikingThing st in input.Set.Values){
+                SpikingNeuron sn = new SpikingNeuron(this);
+                neurons.Add(sn);
+                st.doSpikeMethod = sn.spike;
+            }
         }
 
+        // exposed output worksets
         private Dictionary<Int32, SpikingNeuron> outputs;
         public void addOutput(Int32 key, SpikingNeuron n)
         {
-            neurons.Add(n);
             outputs.Add(key, n);
         }
-
-
-
 
         /// <summary>
         /// Live!

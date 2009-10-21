@@ -65,7 +65,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fabric.cs" />
+    <Compile Include="InputFibre.cs" />
     <Compile Include="SpikingNeuron.cs" />
+    <Compile Include="OutputFibre.cs" />
+    <Compile Include="Fibre.cs" />
+    <Compile Include="SpikingThing.cs" />
+    <Compile Include="UDPSpikingInputs.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

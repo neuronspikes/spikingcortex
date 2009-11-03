@@ -15,7 +15,18 @@ namespace SpikingNeurons
         {
             get { return spiked; }
         }
+        private static int idCount;
+        private int id;
 
+        public int Id
+        {
+            get { return id; }
+        }
+
+        public SpikingThing()
+        {
+            id = idCount++;
+        }
         /// <summary>
         /// Live!
         /// A slice of life to compute state.

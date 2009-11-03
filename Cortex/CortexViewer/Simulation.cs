@@ -14,47 +14,39 @@ namespace CortexViewer
         public int interval;
         public PictureNeuronStates inputPicture, outputPicture, fabricPicture;
         Thread simThread;
-        int droppingImages, droppedImages, droppingComputing, droppedComputing;
-        bool refreshing = false;
-        bool refreshingComputing = false;
+ 
         FabricViewer viewer;
         Fabric fab;
+        UDPSpikingInputs udpInput;
 
         public Simulation(FabricViewer viewer)
         {
             this.viewer = viewer;
-            inputPicture = new PictureNeuronStates(1, 15, null);
-            outputPicture = new PictureNeuronStates(1, 15, null);
-            fabricPicture = new PictureNeuronStates(100, 50, null);
+
             fab = new Fabric("test");
-            
+            udpInput = new UDPSpikingInputs("testudp", 1024, 12000);
+            fab.connectInputFibre(udpInput);
 
-            droppingImages=0;
-            droppedImages=0;
-            droppingComputing=0;
-            droppedComputing = 0;
+            inputPicture = new PictureNeuronStates(16, 64, fab.Inputs);
+            outputPicture = new PictureNeuronStates(16, 64, fab.Outputs);
 
-            interval = 200; 
+            interval = 100; // pause between cycles (in mSec) 
             simThread = new Thread(Live);
             simThread.Start();
+
+            // start asynchronous input spikes reception
+            udpInput.BeginReception();
         }
 
         public void Live()
         {
             while (!stop)
             {
-                if (!refreshingComputing)
-                {
-                    refreshingComputing = true;
-                    droppedComputing = droppingComputing;
-                    droppingComputing = 0;
-                    //compute neuron states
+                //compute neuron states        
+                fab.processAndSee();
 
-                    //update view
-                    viewer.Dispatcher.BeginInvoke(new updateAllImagesDelegate(updateAllImages), null);
-                    refreshingComputing = false;
-                }
-                else droppingComputing++;
+                //update view
+                viewer.Dispatcher.BeginInvoke(new updateAllImagesDelegate(updateAllImages), null);
                 Thread.Sleep(interval);
             }
         }
@@ -63,22 +55,12 @@ namespace CortexViewer
 
         public void updateAllImages()
         {
-            if (!refreshing)
-            {
-                refreshing = true;
-                droppedImages = droppingImages;
-                droppingImages = 0;
-                inputPicture.updateImage();
-                outputPicture.updateImage();
-                fabricPicture.updateImage();
+            inputPicture.updateImage();
+            outputPicture.updateImage();
 
-                viewer.ImageDroppedTextBlock.Text = "Dropped images : "+ droppedImages;
-                viewer.ComputeDroppedTextBlock.Text = "Dropped computations : " + droppedComputing;
-
-                refreshing = false;
-            }
-            else droppingImages++;
-
+            viewer.ImageDroppedTextBlock.Text = "";
+            viewer.ComputeDroppedTextBlock.Text = "Dropped learning : " + Fabric.NotLearning;
+            Fabric.NotLearning = 0;
         }
     }
 }

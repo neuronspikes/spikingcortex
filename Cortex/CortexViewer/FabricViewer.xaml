@@ -18,7 +18,7 @@
         <GridSplitter Grid.Column="1"  HorizontalAlignment="Left" Name="gridSplitter1" Width="10" Margin="0,0,0,12" VerticalAlignment="Stretch" Grid.Row="1" />
         <GridSplitter Grid.Column="1" HorizontalAlignment="Right" Name="gridSplitter2" Width="10" Margin="0,0,0,12" VerticalAlignment="Stretch" Grid.Row="1"/>
         <StatusBar Grid.ColumnSpan="3" Height="23"  Name="statusBar" VerticalAlignment="Top" Grid.Row="0"/>
-        <TextBlock Grid.Column="0" Margin="12,-1.667,476.166,6.668" Name="ImageDroppedTextBlock" Grid.ColumnSpan="1" />
-        <TextBlock Grid.Column="1" Margin="476.167,0,12,5.001" Name="ComputeDroppedTextBlock" Grid.ColumnSpan="1" />
+        <TextBlock Margin="0,0,0,5.001" Name="ImageDroppedTextBlock" HorizontalAlignment="Left" Width="428.419" Grid.Column="1" />
+        <TextBlock Grid.Column="1" Margin="0,-1.667,0,6.668" Name="ComputeDroppedTextBlock" HorizontalAlignment="Right" Width="448.333" />
     </Grid>
 </Window>

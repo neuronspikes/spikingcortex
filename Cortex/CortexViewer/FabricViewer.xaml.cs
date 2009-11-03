@@ -35,7 +35,6 @@ namespace CortexViewer
             // bind moving image sources
             fabricInputImage.Source = simulation.inputPicture.Bitmap;
             fabricOutputImage.Source = simulation.outputPicture.Bitmap;
-            fabricSetImage.Source = simulation.fabricPicture.Bitmap;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

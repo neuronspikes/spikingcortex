@@ -20,7 +20,6 @@ namespace SpikingNeurons
     public class SpikingNeuron : SpikingThing
     {
         Fabric fabric;
-
         Dictionary<SpikingNeuron, double> efferentSynapses;
 
         private double state = 0;
@@ -50,11 +49,16 @@ namespace SpikingNeurons
         /// A slice of life to compute state.
         /// </summary>
         /// <returns></returns>
-        public bool processAndSee()
+        new public bool processAndSee()
         {
-            bool spike = state >= fabric.Treshold;
-            state *= fabric.Leak;
-            spiked = spike;// keep trace to debug
+            bool spike;
+            lock (this)
+            {
+                spike = state >= fabric.Treshold;
+                if (spike) state = 0;
+                else state *= fabric.Leak;
+                spiked = spike;// keep trace to debug
+            }
             return spike;
         }
 
@@ -64,7 +68,7 @@ namespace SpikingNeurons
         /// </summary>
         /// <param name="sources">Neurons that will contribute positivly to the charge.</param>
         /// <param name="totalStrength">(positive)Minimum expected charge resulting of full activation of sources.</param>
-        public void updateExitationRelations(HashSet<SpikingNeuron> sources, double totalStrength)
+        public void updateExitationRelations(List<SpikingNeuron> sources, double totalStrength)
         {
             if (totalStrength < 0) throw new InvalidOperationException("Exitation is limited to positive strength.");
             // TODO: easy to optimize with a single loop that use parallel framework
@@ -75,7 +79,7 @@ namespace SpikingNeurons
 
             foreach (SpikingNeuron n in newSources)
             {
-                n.efferentSynapses.Add(this, totalStrength / contributors);
+                lock (n) { n.efferentSynapses.Add(this, totalStrength / contributors); }
             }
 
             foreach (SpikingNeuron n in oldSources)
@@ -88,8 +92,8 @@ namespace SpikingNeurons
                         n.efferentSynapses[this] += diff;
                     }
                 }
-                else Console.WriteLine("WARNING : Contradiction on applying exitation from " + this
-                    + " to " + n + " , which actually is an inhibition relationship. Change not applied.");
+                else Console.WriteLine("WARNING : Contradiction on applying exitation from neuron "+this.Id
+                    + " to neuron " + n.Id + " , which actually is an inhibition relationship. Change not applied.");
             }
         }
 
@@ -100,7 +104,7 @@ namespace SpikingNeurons
         /// </summary>
         /// <param name="sources"> Sources of exitation to inhibit. Each one is confirmed 
         /// as a positive contributor before applying inhibition relation.</param>
-        public void updateFeedbackRelations(HashSet<SpikingNeuron> sources)
+        public void updateFeedbackRelations(List<SpikingNeuron> sources)
         {
             var requiresFeedback = from neuron in sources where neuron.efferentSynapses.Keys.Contains<SpikingNeuron>(this) select neuron;
 
@@ -111,21 +115,25 @@ namespace SpikingNeurons
             foreach (SpikingNeuron n in newDestinations)
             {
                 if (n.efferentSynapses[this] > 0) // feedback on exitation only
-                    this.efferentSynapses.Add(n, n.efferentSynapses[this] * -1.0);
+                    lock (this) { this.efferentSynapses.Add(n, n.efferentSynapses[this] * -1.0); }
             }
 
             foreach (SpikingNeuron n in oldDestinations)
             {
                 if (n.efferentSynapses[this] > 0) // feedback on exitation source only
                 {
-                    if (this.efferentSynapses[n] > 0)// Should already be on an inhibition relationship, otherwise monostable
+                    lock (n)
                     {
-                        // balance between existing and proposed feedback
+                        if (this.efferentSynapses[n] > 0)// Should already be on an inhibition relationship, otherwise monostable
+                        {
+                            // balance between existing and proposed feedback
 
-                        this.efferentSynapses[n] = n.efferentSynapses[this] * -1.0;
+                            this.efferentSynapses[n] = n.efferentSynapses[this] * -1.0;
+                        }
+                        //else Console.WriteLine("SEVERE WARNING : Contradiction on applying feedback from neuron "+this.Id
+                        //+ " to neuron " + n.Id + " , which is an exitation relationship. Change not applied even if this means positive feedback loop (infinite loop!).");
+                        // >>>>REMOVED>>>> this error needs investigation, but it to common to be a correct constraint
                     }
-                    else Console.WriteLine("SEVERE WARNING : Contradiction on applying feedback from " + this
-                        + " to " + n + " , which is an exitation relationship. Change not applied even if this means positive feedback loop (infinite loop!).");
                 }
             }
         }
@@ -136,45 +144,70 @@ namespace SpikingNeurons
         /// </summary>
         /// <param name="targets">Neurons in concurrence</param>
         /// <param name="proportionalStrength">(negative)charge applied in proportion to targets tresholds.</param>
-        public void updateConcurrencyRelations(HashSet<SpikingNeuron> targets, double proportionalStrength)
+        public void updateConcurrencyRelations(List<SpikingNeuron> concurrents, double proportionalStrength)
         {
             if (proportionalStrength > 0) throw new InvalidOperationException("Inhibition is limited to negative strength.");
 
             // TODO: easy to optimize with a single loop that use parallel framework
-            var newTargets = from neuron in targets where !this.efferentSynapses.Keys.Contains<SpikingNeuron>(neuron) select neuron;
-            var oldTargets = from neuron in targets where this.efferentSynapses.Keys.Contains<SpikingNeuron>(neuron) select neuron;
 
-            foreach (SpikingNeuron n in newTargets)
+            lock (this)
             {
-                this.efferentSynapses.Add(n, n.fabric.Treshold * proportionalStrength);
-            }
-
-            foreach (SpikingNeuron n in oldTargets)
-            {
-                if (n.efferentSynapses[this] < 0)// only for inhibition
+                foreach (SpikingNeuron concurrent in concurrents)
                 {
-                    double diff = n.efferentSynapses[this] - n.fabric.Treshold * proportionalStrength;
-                    if (diff > 0) // do not attenuate inhibition!
+                    if (concurrent != this)
                     {
-                        n.efferentSynapses[this] -= diff;
+                        if (efferentSynapses.Keys.Contains<SpikingNeuron>(concurrent))
+                        {
+
+                            if (efferentSynapses[concurrent] < 0)// only for inhibition
+                            {
+                                double diff = efferentSynapses[concurrent] - fabric.Treshold * proportionalStrength;
+                                if (diff > 0) // do not attenuate inhibition!
+                                {
+                                    efferentSynapses[concurrent] -= diff;
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                            try
+                            {
+                                efferentSynapses.Add(concurrent, fabric.Treshold * proportionalStrength);
+                            }
+                            catch (System.ArgumentException e)
+                            {
+                                Console.WriteLine("WARNING : updateConcurrencyRelations on neuron "+this.Id+" - efferent synapse already contains this new target.");
+                            }
+                        }
                     }
                 }
-                else Console.WriteLine("WARNING : Contradiction on applying inhibition from " + this
-                    + " to " + n + " , which is an exitation relationship. Change not applied.");
             }
-
         }
 
+        public void spikeFromExternal()
+        {
+            lock (this)
+            {
+                // add treshold charge, this could be heavy in asynchronous systems
+                // inhibition still applies
+                this.state += this.fabric.Treshold;
+            }
+        }
         /// <summary>
         /// Transmit charges to efferent neurons
         /// </summary>
-        public void spike(){
-            foreach (SpikingNeuron n in efferentSynapses.Keys)
+        public void spike()
+        {
+            lock (this)
             {
-                // TODO: optimize to avoid this lookup
-                n.state += efferentSynapses[n];
+                foreach (SpikingNeuron n in efferentSynapses.Keys)
+                {
+                    // TODO: optimize to avoid this lookup
+                    n.state += efferentSynapses[n];
+                }
+                spiked = true;
             }
         }
-
     }
 }

@@ -46,11 +46,11 @@ namespace SpikingNeurons
         }
         private int sizeConstraint;
 
-        private Dictionary<Int32, SpikingThing> set;
+        protected List<SpikingThing> spikingThings;
 
-        public Dictionary<Int32, SpikingThing> Set
+        public List<SpikingThing> SpikingThings
         {
-            get { return set; }
+            get { return spikingThings; }
         }
     }
 }

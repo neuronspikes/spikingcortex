@@ -62,31 +62,35 @@ namespace CortexViewer
             int w = rectangle.Width;
             int h = rectangle.Height;
             long coverage = w * h;
-            long size = neuronList.LongCount<SpikingNeuron>();
-            long coverageGap = size - coverage; // neurons not displayed, negative means unused areas (transparent)
+            long size = neuronList.Count;
+            long coverageGap = size - coverage; // neurons not displayed, negative means unused areas (black)
 
             int index = 0; // to scan lines...
             lock (this)
             {
                 // process
                 int PixelSize = 4;
-                int x = 0, y = 0;
                 unsafe
                 {
-                    for (int yScan = y; yScan < (y + h); yScan++)
+                    for (int y=0; y<h; y++)
                     {
-
-                        for (int xScan = x; xScan < (x + w); xScan++)
+                        for (int x=0; x < w; x++)
                         {
-                            int xRef = xScan * PixelSize;
-                            byte r = 0, g = 0, b = 0, a = 0;//black and transparent by default
+                            int xRef = (y*w+  x) * PixelSize;
+                            byte r = 0, g = 0, b = 0, a = 0;//black and opaque by default
 
                             if (index < size)
                             {
                                 SpikingNeuron neuron = neuronList[index++];
-                                r = (neuron.State < 0 ? (byte)(neuron.State * -255) : (byte)0); ;
-                                g = (neuron.State > 0 ? (byte)(neuron.State * 255) : (byte)0);
-                                b = (neuron.Spiked ? (byte)255 : (byte)0);
+
+                                // limit state display to range [-1:1]
+                                double s = neuron.State;
+                                s = (s > 1.0 ? 1.0 : s);
+                                s = (s < -1.0 ? -1.0 : s);
+
+                                r = (neuron.State < 0 ? (byte)(neuron.State * -255) : (byte)64); ;
+                                g = (neuron.State > 0 ? (byte)(neuron.State * 255) : (byte)64);
+                                b = (neuron.Spiked ? (byte)255 : (byte)64);
                                 a = 255;
                             }
                             rawImage[xRef] = b;

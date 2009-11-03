@@ -55,7 +55,7 @@ namespace SpikingNeurons
 
             Byte[] receiveBytes = u.EndReceive(ar, ref e);
 
-            usi.interpretStreamAsPowers(receiveBytes);
+            usi.interpretStreamAsDeltas(receiveBytes);
 
             // Prepare for next shot
             usi.udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), usi);

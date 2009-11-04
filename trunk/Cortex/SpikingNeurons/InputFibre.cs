@@ -19,6 +19,12 @@ namespace SpikingNeurons
     /// </summary>
     public class InputFibre : Fibre
     {
+        private double spikeWeight;
 
+        public double SpikeWeight
+        {
+            get { return spikeWeight; }
+            set { spikeWeight = value; }
+        }
     }
 }

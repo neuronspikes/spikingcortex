@@ -34,6 +34,7 @@ namespace CortexViewer
   
             // bind moving image sources
             fabricInputImage.Source = simulation.inputPicture.Bitmap;
+            this.fabricSetImage.Source = simulation.fabricPicture.Bitmap;
             fabricOutputImage.Source = simulation.outputPicture.Bitmap;
         }
 

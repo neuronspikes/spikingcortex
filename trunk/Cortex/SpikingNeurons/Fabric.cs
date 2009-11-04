@@ -125,7 +125,7 @@ namespace SpikingNeurons
                 SpikingNeuron sn = new SpikingNeuron(this);
                 neurons.Add(sn);
                 inputs.Add(sn);
-                st.doSpikeMethod = sn.spikeFromExternal;
+
             }
         }
         public List<SpikingNeuron> getSpikingNeurons()

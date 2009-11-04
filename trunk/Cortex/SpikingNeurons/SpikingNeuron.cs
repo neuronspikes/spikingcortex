@@ -42,6 +42,7 @@ namespace SpikingNeurons
         {
             fabric = f;
             efferentSynapses = new Dictionary<SpikingNeuron, double>();
+            id = idCount++;
         }
 
         /// <summary>
@@ -185,13 +186,13 @@ namespace SpikingNeurons
             }
         }
 
-        public void spikeFromExternal()
+        public void spikeFromExternal(InputFibre fiber)
         {
             lock (this)
             {
-                // add treshold charge, this could be heavy in asynchronous systems
+                // add fiber defined charge (non-targetted uniform weight)
                 // inhibition still applies
-                this.state += this.fabric.Treshold;
+                this.state += fiber.SpikeWeight;
             }
         }
         /// <summary>
@@ -209,5 +210,21 @@ namespace SpikingNeurons
                 spiked = true;
             }
         }
+                protected bool spiked;
+
+        public bool Spiked
+        {
+            get { return spiked; }
+        }
+        private static int idCount;
+        private int id;
+
+        public int Id
+        {
+            get { return id; }
+        }
+
+
+
     }
 }

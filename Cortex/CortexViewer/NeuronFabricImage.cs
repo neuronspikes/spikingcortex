@@ -57,7 +57,7 @@ namespace CortexViewer
             updateImage();
         }
 
-        private long updateRawImageFromNeurons()
+        private long updateRawImageFromNeuronStates()
         {
             int w = rectangle.Width;
             int h = rectangle.Height;
@@ -72,11 +72,11 @@ namespace CortexViewer
                 int PixelSize = 4;
                 unsafe
                 {
-                    for (int y=0; y<h; y++)
+                    for (int y = 0; y < h; y++)
                     {
-                        for (int x=0; x < w; x++)
+                        for (int x = 0; x < w; x++)
                         {
-                            int xRef = (y*w+  x) * PixelSize;
+                            int xRef = (y * w + x) * PixelSize;
                             byte r = 0, g = 0, b = 0, a = 0;//black and opaque by default
 
                             if (index < size)
@@ -104,37 +104,101 @@ namespace CortexViewer
             return coverageGap;
         }
 
+        private long updateRawImageFromSpikes(List<SpikingNeuron> thingList)
+        {
+            int w = rectangle.Width;
+            int h = rectangle.Height;
+            long coverage = w * h;
+            long size = thingList.Count;
+            long coverageGap = size - coverage; // neurons not displayed, negative means unused areas (black)
+
+            int index = 0; // to scan lines...
+            lock (this)
+            {
+                // process
+                int PixelSize = 4;
+                unsafe
+                {
+                    for (int y = 0; y < h; y++)
+                    {
+                        for (int x = 0; x < w; x++)
+                        {
+                            int xRef = (y * w + x) * PixelSize;
+                            byte r = 0, g = 0, b = 0, a = 0;//black and opaque by default
+
+                            if (index < size)
+                            {
+                                SpikingThing t = thingList[index++];
+
+                                r = (byte)64;
+                                g = (byte)64;
+                                b = (t.Spiked ? (byte)255 : (byte)64);
+                                a = 255;
+                            }
+                            rawImage[xRef] = b;
+                            rawImage[xRef + 1] = g;
+                            rawImage[xRef + 2] = r;
+                            rawImage[xRef + 3] = a;
+                        }
+                    }
+                }
+            }
+            return coverageGap;
+        }
+
         public long updateImage()
         {
             long coverage = 0;
-            lock(bitmap){
-            if (neuronList == null)// no data!
+            lock (bitmap)
             {
-                if (bitmap != null)
+                if (neuronList == null)// no data!
                 {
-                    // pupoulate the image with random data. Useful to debug
-                    bitmap.Lock();
-                    Random value = new Random();
-                    value.NextBytes(rawImage);
-                    bitmap.WritePixels(rectangle, rawImage, rawStride, 0);
-                    bitmap.Unlock();
+                    if (bitmap != null)
+                    {
+                        // pupoulate the image with random data. Useful to debug
+                        bitmap.Lock();
+                        Random value = new Random();
+                        value.NextBytes(rawImage);
+                        bitmap.WritePixels(rectangle, rawImage, rawStride, 0);
+                        bitmap.Unlock();
+                    }
                 }
-            }
-            else // update from neuron list states
-            {
-                if (bitmap != null)
+                else // update from neuron list states
                 {
+                    if (bitmap != null)
+                    {
 
-                    bitmap.Lock();
-                    coverage = updateRawImageFromNeurons();
+                        bitmap.Lock();
+                        coverage = updateRawImageFromNeuronStates();
 
-                    bitmap.WritePixels(rectangle, rawImage, rawStride, 0);
-                    bitmap.Unlock();
+                        bitmap.WritePixels(rectangle, rawImage, rawStride, 0);
+                        bitmap.Unlock();
+                    }
+
                 }
-
+                return coverage;
             }
-            return coverage;
         }
+        public long updateImageFromSpikes(List<SpikingNeuron> things)
+        {
+            long coverage = 0;
+            lock (bitmap)
+            {
+                if (neuronList != null)// no data!
+                {
+                    if (bitmap != null)
+                    {
+
+                        bitmap.Lock();
+                        coverage = updateRawImageFromSpikes(things);
+
+                        bitmap.WritePixels(rectangle, rawImage, rawStride, 0);
+                        bitmap.Unlock();
+                    }
+
+                }
+                return coverage;
+            }
         }
     }
 }

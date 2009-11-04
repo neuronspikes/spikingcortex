@@ -28,6 +28,7 @@ namespace CortexViewer
             fab.connectInputFibre(udpInput);
 
             inputPicture = new PictureNeuronStates(16, 64, fab.Inputs);
+            fabricPicture = new PictureNeuronStates(64, 32, fab.getSpikingNeurons());
             outputPicture = new PictureNeuronStates(16, 64, fab.Outputs);
 
             interval = 100; // pause between cycles (in mSec) 
@@ -55,8 +56,9 @@ namespace CortexViewer
 
         public void updateAllImages()
         {
-            inputPicture.updateImage();
-            outputPicture.updateImage();
+            inputPicture.updateImageFromSpikes(fab.Inputs);
+            fabricPicture.updateImage();
+            outputPicture.updateImageFromSpikes(fab.Outputs);
 
             viewer.ImageDroppedTextBlock.Text = "";
             viewer.ComputeDroppedTextBlock.Text = "Dropped learning : " + Fabric.NotLearning;

@@ -20,15 +20,14 @@ namespace SpikingNeurons
             set { size = value; }
         }
 
-        public UDPSpikingInputs(string name, int size, int port)
+        public UDPSpikingInputs(Fabric fabric, string name, int size, int port)
         {
             this.size = size;
             this.name = name;
-            this.spikingThings = new List<SpikingThing>();
-
+            neurons = new List<SpikingNeuron>();
             for (int i = 0; i < size; i++)
             {
-                spikingThings.Add(new SpikingThing());
+                neurons.Add(new SpikingNeuron(fabric));
             }
 
             //IPEndPoint object will allow us to read datagrams sent from any source.
@@ -77,7 +76,7 @@ namespace SpikingNeurons
                 {
                     adrs += code;
                     if (adrs < size)
-                        SpikingThings[adrs].doSpikeMethod(); // trigger spike
+                        neurons[adrs].spikeFromExternal(this); // trigger spike
                     count++;
                 }
             }
@@ -87,9 +86,9 @@ namespace SpikingNeurons
             // interpret data as 8 bit spike adress (intensive action 0-255 range)
             foreach (byte code in receiveBytes)
             {
-                SpikingThing t = SpikingThings[code];
+                SpikingNeuron t = neurons[code];
 
-                t.doSpikeMethod(); // trigger spike
+                t.spikeFromExternal(this); // trigger spike
             }
         }
 
@@ -97,15 +96,15 @@ namespace SpikingNeurons
         {
             // interpret stream as intensity => number of spikes per frame (very intensive action on all SpikingThings)
             int adrs = 0;
-            int maxAdrs = SpikingThings.Count;
+            int maxAdrs = neurons.Count;
             foreach (byte code in receiveBytes)
             {
                 if (adrs < maxAdrs)
                 {
-                    SpikingNeuron t = SpikingThings[adrs++];
+                    SpikingNeuron t = neurons[adrs++];
 
                     for (byte pow = 0; pow < code; pow++)
-                        t(); // trigger spike
+                        t.spikeFromExternal(this); // trigger spike
                 }
             }
         }

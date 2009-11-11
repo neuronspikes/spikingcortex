@@ -17,7 +17,7 @@ namespace SpikingNeurons
     ///<!-- /Creative Commons License -->
 
     /// </summary>
-    public class SpikingNeuron : SpikingThing
+    public class SpikingNeuron
     {
         Fabric fabric;
         Dictionary<SpikingNeuron, double> efferentSynapses;

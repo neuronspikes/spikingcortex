@@ -18,7 +18,7 @@ namespace SpikingNeurons
     ///This software is licensed under the <a href="http://creativecommons.org/licenses/GPL/2.0/">CC-GNU GPL</a> version 2.0 or later.
     ///<!-- /Creative Commons License -->
     /// </summary>
-    public class Fibre
+    public class NeuronFamily
     {
         /// <summary>
         /// ReadOnly 
@@ -46,11 +46,15 @@ namespace SpikingNeurons
         }
         private int sizeConstraint;
 
-        protected List<SpikingThing> spikingThings;
+        protected List<SpikingNeuron> neurons;
 
-        public List<SpikingThing> SpikingThings
+        public List<SpikingNeuron> Neurons
         {
-            get { return spikingThings; }
+            get { return neurons; }
         }
+    }
+
+    public class Fibre:NeuronFamily
+    {
     }
 }

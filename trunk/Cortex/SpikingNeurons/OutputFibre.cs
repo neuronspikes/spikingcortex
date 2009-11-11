@@ -7,5 +7,6 @@ namespace SpikingNeurons
 {
     public class OutputFibre : Fibre
     {
+        delegate void processOutput(List<SpikingNeuron> output);
     }
 }

@@ -24,11 +24,11 @@ namespace CortexViewer
             this.viewer = viewer;
 
             fab = new Fabric("test");
-            udpInput = new UDPSpikingInputs("testudp", 1024, 12000);
+            udpInput = new UDPSpikingInputs(fab,"testudp", 8192, 12000);
             fab.connectInputFibre(udpInput);
 
-            inputPicture = new PictureNeuronStates(16, 64, fab.Inputs);
-            fabricPicture = new PictureNeuronStates(64, 32, fab.getSpikingNeurons());
+            inputPicture = new PictureNeuronStates(16, 64, fab.getInputFibre("testudp").Neurons);
+            fabricPicture = new PictureNeuronStates(320, 32, fab.getSpikingNeurons());
             outputPicture = new PictureNeuronStates(16, 64, fab.Outputs);
 
             interval = 100; // pause between cycles (in mSec) 
@@ -56,7 +56,7 @@ namespace CortexViewer
 
         public void updateAllImages()
         {
-            inputPicture.updateImageFromSpikes(fab.Inputs);
+            inputPicture.updateImageFromSpikes(fab.getInputFibre("testudp").Neurons);
             fabricPicture.updateImage();
             outputPicture.updateImageFromSpikes(fab.Outputs);
 

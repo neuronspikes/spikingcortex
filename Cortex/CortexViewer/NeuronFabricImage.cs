@@ -128,7 +128,7 @@ namespace CortexViewer
 
                             if (index < size)
                             {
-                                SpikingThing t = thingList[index++];
+                                SpikingNeuron t = thingList[index++];
 
                                 r = (byte)64;
                                 g = (byte)64;

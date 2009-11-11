@@ -18,7 +18,7 @@ namespace SpikingNeurons
     ///This software is licensed under the <a href="http://creativecommons.org/licenses/GPL/2.0/">CC-GNU GPL</a> version 2.0 or later.
     ///<!-- /Creative Commons License -->
     /// </summary>
-    public class Fabric : Fibre
+    public class Fabric : NeuronFamily
     {
         /// <summary>
         /// Default constructor. 
@@ -34,7 +34,6 @@ namespace SpikingNeurons
             this.name = name;
             neurons = new List<SpikingNeuron>();
             inputFibres = new Dictionary<string, InputFibre>();
-            inputs = new List<SpikingNeuron>();
             outputs = new List<SpikingNeuron>();
 
 
@@ -98,18 +97,13 @@ namespace SpikingNeurons
         }
         private double leak;
 
-        // internal workset of neurons, may contains neurons from other fabric (inputs)
-        private List<SpikingNeuron> neurons;
-
         // input interfaces
         private Dictionary<string, InputFibre> inputFibres;
-        private List<SpikingNeuron> inputs;
 
-        public List<SpikingNeuron> Inputs
+        public InputFibre getInputFibre(string name)
         {
-            get { return inputs; }
+            return inputFibres[name];
         }
-
 
         /// <summary>
         /// Inputs are bound to a set of dedicated neurons to have 
@@ -120,13 +114,11 @@ namespace SpikingNeurons
         {
             inputFibres.Add(input.Name, input);
 
-            foreach (SpikingThing st in input.SpikingThings)
-            {
-                SpikingNeuron sn = new SpikingNeuron(this);
-                neurons.Add(sn);
-                inputs.Add(sn);
+                foreach (SpikingNeuron sn in input.Neurons)
+                {
+                    neurons.Add(sn);
+                }
 
-            }
         }
         public List<SpikingNeuron> getSpikingNeurons()
         {

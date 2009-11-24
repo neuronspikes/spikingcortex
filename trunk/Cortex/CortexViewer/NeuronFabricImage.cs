@@ -88,9 +88,9 @@ namespace CortexViewer
                                 s = (s > 1.0 ? 1.0 : s);
                                 s = (s < -1.0 ? -1.0 : s);
 
-                                r = (neuron.State < 0 ? (byte)(neuron.State * -255) : (byte)64); ;
-                                g = (neuron.State > 0 ? (byte)(neuron.State * 255) : (byte)64);
-                                b = (neuron.Spiked ? (byte)255 : (byte)64);
+                                r = (neuron.State < 0 ? (byte)(neuron.State * -255) : (byte)0); ;
+                                g = (neuron.State > 0 ? (byte)(neuron.State * 255) : (byte)0);
+                                b = (neuron.Spiked ? (byte)255 : (byte)0);
                                 a = 255;
                             }
                             rawImage[xRef] = b;

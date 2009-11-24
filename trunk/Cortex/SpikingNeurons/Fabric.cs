@@ -169,7 +169,6 @@ namespace SpikingNeurons
                 n.spike();
             }
 
-
             if ((newlySpiked.Count > 0 || previouslySpiked.Count > 0))
                 if (ready) learnTrough();
                 else notLearning++;

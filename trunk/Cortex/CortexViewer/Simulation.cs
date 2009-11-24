@@ -24,14 +24,18 @@ namespace CortexViewer
             this.viewer = viewer;
 
             fab = new Fabric("test");
-            udpInput = new UDPSpikingInputs(fab,"testudp", 8192, 12000);
+            udpInput = new UDPSpikingInputs(fab,"testudp", 64*64, 12000);
             fab.connectInputFibre(udpInput);
 
-            inputPicture = new PictureNeuronStates(16, 64, fab.getInputFibre("testudp").Neurons);
-            fabricPicture = new PictureNeuronStates(320, 32, fab.getSpikingNeurons());
-            outputPicture = new PictureNeuronStates(16, 64, fab.Outputs);
+            // tuning for 8bit grayscalse picture
+            fab.Leak = 254.0 / 256.0;
+            udpInput.SpikeWeight = 64.0 /256.0;
 
-            interval = 100; // pause between cycles (in mSec) 
+            inputPicture = new PictureNeuronStates(1, 64, fab.getInputFibre("testudp").Neurons);
+            fabricPicture = new PictureNeuronStates(64, 200, fab.getSpikingNeurons());
+            outputPicture = new PictureNeuronStates(1, 64, fab.Outputs);
+
+            interval = 4; // pause between cycles (in mSec) 
             simThread = new Thread(Live);
             simThread.Start();
 

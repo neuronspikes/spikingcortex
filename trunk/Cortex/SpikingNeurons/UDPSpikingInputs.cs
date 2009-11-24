@@ -55,7 +55,6 @@ namespace SpikingNeurons
             Byte[] receiveBytes = u.EndReceive(ar, ref e);
 
             usi.interpretStreamAsDeltas(receiveBytes);
-            usi.SpikeWeight = 1.0;
 
             // Prepare for next shot
             usi.udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), usi);
@@ -74,9 +73,9 @@ namespace SpikingNeurons
                 }
                 else // there is a spike
                 {
-                    adrs += code;
+                    adrs += code; // since zero have a meaning...
                     if (adrs < size)
-                        neurons[adrs].spikeFromExternal(this); // trigger spike
+                        neurons[adrs-1].spikeFromExternal(this); // trigger spike
                     count++;
                 }
             }

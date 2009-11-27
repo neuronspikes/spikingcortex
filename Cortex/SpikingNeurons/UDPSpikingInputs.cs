@@ -34,11 +34,7 @@ namespace SpikingNeurons
             RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, port);
             // Receive a message and write it to the console.
             udpClient = new UdpClient(RemoteIpEndPoint);
-        }
-
-
-        public void BeginReception()
-        {
+            fabric.connectInputFibre(this);
             udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), this);
         }
 

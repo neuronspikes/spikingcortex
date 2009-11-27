@@ -12,12 +12,14 @@ namespace CortexViewer
     {
         public bool stop = false; // true will stop "Live" thread
         public int interval;
-        public PictureNeuronStates inputPicture, outputPicture, fabricPicture;
+        public PictureNeuronStates inputPicture, outputPicture;
         Thread simThread;
  
         FabricViewer viewer;
-        Fabric fab;
-        UDPSpikingInputs udpInput;
+        public Fabric fab;
+        public UDPSpikingInputs udpInput;
+
+        private static int frameDrops = 0;
 
         public Simulation(FabricViewer viewer)
         {
@@ -25,22 +27,18 @@ namespace CortexViewer
 
             fab = new Fabric("test");
             udpInput = new UDPSpikingInputs(fab,"testudp", 64*64, 12000);
-            fab.connectInputFibre(udpInput);
+           
 
             // tuning for 8bit grayscalse picture
             fab.Leak = 254.0 / 256.0;
             udpInput.SpikeWeight = 64.0 /256.0;
 
-            inputPicture = new PictureNeuronStates(1, 64, fab.getInputFibre("testudp").Neurons);
-            fabricPicture = new PictureNeuronStates(64, 200, fab.getSpikingNeurons());
-            outputPicture = new PictureNeuronStates(1, 64, fab.Outputs);
+            inputPicture = new PictureNeuronStates(64, 64, fab.getInputFibre("testudp").Neurons);
+            outputPicture = new PictureNeuronStates(64, 64, fab.Outputs);
 
             interval = 4; // pause between cycles (in mSec) 
             simThread = new Thread(Live);
             simThread.Start();
-
-            // start asynchronous input spikes reception
-            udpInput.BeginReception();
         }
 
         public void Live()
@@ -52,7 +50,9 @@ namespace CortexViewer
 
                 //update view
                 viewer.Dispatcher.BeginInvoke(new updateAllImagesDelegate(updateAllImages), null);
+                frameDrops++;
                 Thread.Sleep(interval);
+
             }
         }
 
@@ -60,12 +60,11 @@ namespace CortexViewer
 
         public void updateAllImages()
         {
-            inputPicture.updateImageFromSpikes(fab.getInputFibre("testudp").Neurons);
-            fabricPicture.updateImage();
-            outputPicture.updateImageFromSpikes(fab.Outputs);
+            inputPicture.updateImage();//.updateImageFromSpikes(fab.getInputFibre("testudp").Neurons);
+            outputPicture.updateImage();//.updateImageFromSpikes(fab.Outputs);
 
-            viewer.ImageDroppedTextBlock.Text = "";
-            viewer.ComputeDroppedTextBlock.Text = "Dropped learning : " + Fabric.NotLearning;
+            viewer.Msg.Content = "Neuron count : "+SpikingNeuron.Count+" Connexions = "+SpikingNeuron.Connexions+" Learning drops = "+Fabric.NotLearning+" Frame drops = "+frameDrops;
+            frameDrops=0;
             Fabric.NotLearning = 0;
         }
     }

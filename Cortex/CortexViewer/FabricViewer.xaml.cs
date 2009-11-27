@@ -33,14 +33,71 @@ namespace CortexViewer
 
   
             // bind moving image sources
- //           fabricInputImage.Source = simulation.inputPicture.Bitmap;
-            this.fabricSetImage.Source = simulation.fabricPicture.Bitmap;
- //           fabricOutputImage.Source = simulation.outputPicture.Bitmap;
+            fabricInputImage.Source = simulation.inputPicture.Bitmap;
+            fabricOutputImage.Source = simulation.outputPicture.Bitmap;
+
+            LeakSlider.Value = simulation.fab.Leak;
+            SpikeEffectSlider.Value = simulation.fab.SpikeEffect;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             simulation.stop = true;
+        }
+
+        private void IntervalSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if(simulation != null)simulation.interval = ((int)e.NewValue);
+        }
+
+        private void LeakSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double leak=1.0/((double)e.NewValue);
+            if (simulation != null)
+            {
+                simulation.fab.Leak = leak;
+                LeakText.Content = "leak = "+leak;
+            }
+        }
+
+        private void ExitationSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (simulation != null)
+            {
+                simulation.fab.SpikeEffect = ((int)e.NewValue);
+                ExitationText.Content = "spike effect = "+e.NewValue;
+            }
+        }
+
+
+        private void LearnConceptsCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            simulation.fab.CanLearnNewConcepts = true;
+        }
+
+        private void LearnConceptsCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            simulation.fab.CanLearnNewConcepts = false;
+        }
+
+        private void FeedBackCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            simulation.fab.CanDevelopFeedback = true;
+        }
+
+        private void FeedBackCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            simulation.fab.CanDevelopFeedback = false;
+        }
+
+        private void LearnConcurrencyCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            simulation.fab.CanDevelopConcurrency = true;
+        }
+
+        private void LearnConcurrencyCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            simulation.fab.CanDevelopConcurrency = false;
         }
     }
 }

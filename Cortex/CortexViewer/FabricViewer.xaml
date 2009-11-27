@@ -4,21 +4,26 @@
     Title="SpikingCortexFabricViewer" Height="525" Width="1100" Closing="Window_Closing">
     <Grid Name="fabricViewGrid"  SnapsToDevicePixels="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black">
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"></RowDefinition>
+            <RowDefinition Height="50
+                           "></RowDefinition>
             <RowDefinition Height="500*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Name="Input" Width="50*" ></ColumnDefinition>
-            <ColumnDefinition Name="Fabric" Width="500*" ></ColumnDefinition>
             <ColumnDefinition Name="Output" Width="50*" ></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Image Grid.Column="0" Margin="0,0,0,0" Name="fabricInputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-        <Image Grid.Column="1" Margin="12,0,12,0" Name="fabricSetImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-        <Image Grid.Column="2" Margin="0,0,0,0" Name="fabricOutputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+        <Image Grid.Column="0" Margin="12,0,12,0" Name="fabricInputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+        <Image Grid.Column="1" Margin="0,0,0,0" Name="fabricOutputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
         <GridSplitter Grid.Column="1"  HorizontalAlignment="Left" Name="gridSplitter1" Width="10" Margin="0,0,0,12" VerticalAlignment="Stretch" Grid.Row="1" />
-        <GridSplitter Grid.Column="1" HorizontalAlignment="Right" Name="gridSplitter2" Width="10" Margin="0,0,0,12" VerticalAlignment="Stretch" Grid.Row="1"/>
-        <StatusBar Grid.ColumnSpan="3" Height="23"  Name="statusBar" VerticalAlignment="Top" Grid.Row="0"/>
-        <TextBlock Margin="0,0,0,5.001" Name="ImageDroppedTextBlock" HorizontalAlignment="Left" Width="428.419" Grid.Column="1" />
-        <TextBlock Grid.Column="1" Margin="0,-1.667,0,6.668" Name="ComputeDroppedTextBlock" HorizontalAlignment="Right" Width="448.333" />
+        <StatusBar Margin="0,0,0,2" Name="statusBar1" Grid.ColumnSpan="2" />
+        <Slider Margin="224,0,215,0" Name="IntervalSlider" Cursor="IBeam" Maximum="1000" Value="4" ValueChanged="IntervalSlider_ValueChanged" Minimum="1" ToolTip="Interval" TickPlacement="TopLeft" TickFrequency="100" />
+        <Slider Margin="12,0,0,3" HorizontalAlignment="Left" Width="100" Background="LightGreen" LargeChange="0.1" Maximum="1" SmallChange="0.01" Value="1" TickFrequency="0.1" ToolTip="Exitation" ValueChanged="ExitationSlider_ValueChanged" TickPlacement="TopLeft" Name="SpikeEffectSlider" />
+        <Slider Margin="118,0,0,3" Name="LeakSlider" HorizontalAlignment="Left" Width="100" Background="DarkViolet" Maximum="1.25" LargeChange="0.1" SmallChange="0.001" TickFrequency="0.1" Value="1.1" ToolTip="Inhibition" Minimum="1" TickPlacement="TopLeft" ValueChanged="LeakSlider_ValueChanged" />
+        <Label Grid.RowSpan="2" Height="28" Margin="330,0,12,0" Name="Msg" VerticalAlignment="Top" Grid.ColumnSpan="2">Messages</Label>
+        <CheckBox Grid.Column="1" HorizontalAlignment="Left" Margin="25,0,0,6" Name="LearnConcurrencyCheckBox" Width="120" Height="18" VerticalAlignment="Bottom" Checked="LearnConcurrencyCheckBox_Checked" Unchecked="LearnConcurrencyCheckBox_Unchecked">Learn concurrency</CheckBox>
+        <CheckBox Margin="457,0,0,6" Name="FeedBackCheckBox" Grid.ColumnSpan="2" Height="18" VerticalAlignment="Bottom" Checked="FeedBackCheckBox_Checked" HorizontalAlignment="Left" Width="120" Unchecked="FeedBackCheckBox_Unchecked">Learn feed-back</CheckBox>
+        <CheckBox Margin="330,0,0,6" Name="LearnConceptsCheckBox" Height="18" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="121" Checked="LearnConceptsCheckBox_Checked" Unchecked="LearnConceptsCheckBox_Unchecked">Learn new concepts</CheckBox>
+        <Label Margin="0,16,321,6" Name="LeakText" HorizontalAlignment="Right" Width="100">LeakText</Label>
+        <Label Margin="12,16,0,6" Name="ExitationText" HorizontalAlignment="Left" Width="100">ExitationText</Label>
     </Grid>
 </Window>

@@ -74,7 +74,7 @@ namespace SpikingNeurons
             get { return spikeEffect; }
             set
             {
-                if (value < 0 || value >= 1) throw new InvalidOperationException(); // No, 1 is not acceptable!
+                if (value < 0 || value > 1) throw new InvalidOperationException(); 
                 spikeEffect = value;
             }
         }
@@ -133,8 +133,11 @@ namespace SpikingNeurons
             get { return outputs; }
         }
 
-        List<SpikingNeuron> previouslySpiked;
-        List<SpikingNeuron> newlySpiked;
+        List<SpikingNeuron> previouslySpikedInput;
+        List<SpikingNeuron> newlySpikedInput;
+
+        List<SpikingNeuron> previouslySpikedOutput;
+        List<SpikingNeuron> newlySpikedOutput;
 
         /// <summary>
         /// Live!
@@ -145,31 +148,52 @@ namespace SpikingNeurons
         public void processAndSee()
         {
 
-            previouslySpiked = new List<SpikingNeuron>();
-            newlySpiked = new List<SpikingNeuron>();
+            previouslySpikedInput = new List<SpikingNeuron>();
+            newlySpikedInput = new List<SpikingNeuron>(); 
+            
+            previouslySpikedOutput = new List<SpikingNeuron>();
+            newlySpikedOutput = new List<SpikingNeuron>();
 
             // compute state and action lists
-            foreach (SpikingNeuron n in neurons)
+            foreach (SpikingNeuron n in this.inputFibres["testudp"].Neurons) //TODO:Cycle through all inputs!!!
             {
                 if (n.Spiked)
                 {
                     // did spike last turn
-                    previouslySpiked.Add(n);
+                    previouslySpikedInput.Add(n);
 
                 }
                 if (n.processAndSee())
                 {
-                    newlySpiked.Add(n);
+                    newlySpikedInput.Add(n);
+                }
+            }
+            // compute state and action lists
+            foreach (SpikingNeuron n in this.outputs)
+            {
+                if (n.Spiked)
+                {
+                    // did spike last turn
+                    previouslySpikedOutput.Add(n);
+
+                }
+                if (n.processAndSee())
+                {
+                    newlySpikedOutput.Add(n);
                 }
             }
 
-            // process efferent synapses
-            foreach (SpikingNeuron n in newlySpiked)
+            // process efferent synapses 
+            foreach (SpikingNeuron n in newlySpikedInput)
+            {
+                n.spike();
+            }
+            foreach (SpikingNeuron n in newlySpikedOutput)
             {
                 n.spike();
             }
 
-            if ((newlySpiked.Count > 0 || previouslySpiked.Count > 0))
+            if ((newlySpikedInput.Count > 0 || previouslySpikedInput.Count > 0) || (newlySpikedOutput.Count > 0 || previouslySpikedOutput.Count > 0))
                 if (ready) learnTrough();
                 else notLearning++;
 
@@ -183,20 +207,43 @@ namespace SpikingNeurons
         public void learnTrough()
         {
             ready = false; // false, if moderation is needed
-            if (newlySpiked.Count == 0 && previouslySpiked.Count > 1)
+            if (newlySpikedOutput.Count == 0 && previouslySpikedInput.Count > 1 && canLearnNewConcepts)
             {
                 SpikingNeuron n = new SpikingNeuron(this);
                 this.neurons.Add(n);
                 this.outputs.Add(n);
-                n.updateExitationRelations(previouslySpiked, 1.0);
+                n.updateExitationRelations(previouslySpikedInput, 1.0);
             }
-            foreach (SpikingNeuron n in newlySpiked)
-            {
-                n.updateConcurrencyRelations(newlySpiked, -1.0);
 
-                n.updateFeedbackRelations(previouslySpiked);
+            if(canDevelopConcurrency || canDevelopFeedback) foreach (SpikingNeuron n in newlySpikedOutput)
+            {
+                if (canDevelopConcurrency) n.updateConcurrencyRelations(newlySpikedOutput, -1.0);
+
+                if (canDevelopFeedback) n.updateFeedbackRelations(previouslySpikedInput);
             }
             ready = true;
+        }
+
+        bool canLearnNewConcepts = false;
+
+        public bool CanLearnNewConcepts
+        {
+            get { return canLearnNewConcepts; }
+            set { canLearnNewConcepts = value; }
+        }
+        bool canDevelopConcurrency = false;
+
+        public bool CanDevelopConcurrency
+        {
+            get { return canDevelopConcurrency; }
+            set { canDevelopConcurrency = value; }
+        }
+        bool canDevelopFeedback = false;
+
+        public bool CanDevelopFeedback
+        {
+            get { return canDevelopFeedback; }
+            set { canDevelopFeedback = value; }
         }
     }
 }

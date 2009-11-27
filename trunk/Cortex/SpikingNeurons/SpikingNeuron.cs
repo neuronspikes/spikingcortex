@@ -22,6 +22,18 @@ namespace SpikingNeurons
         Fabric fabric;
         Dictionary<SpikingNeuron, double> efferentSynapses;
 
+        protected static long count=0;
+        public static long Count
+        {
+            get { return count; }
+        }
+
+        protected static long connexions=0;
+        public static long Connexions
+        {
+            get { return connexions; }
+        }
+
         private double state = 0;
         /// <summary>
         /// The internal neuron state
@@ -43,6 +55,7 @@ namespace SpikingNeurons
             fabric = f;
             efferentSynapses = new Dictionary<SpikingNeuron, double>();
             id = idCount++;
+            count++;
         }
 
         /// <summary>
@@ -80,7 +93,10 @@ namespace SpikingNeurons
 
             foreach (SpikingNeuron n in newSources)
             {
-                lock (n) { n.efferentSynapses.Add(this, totalStrength / contributors); }
+                lock (n) { n.efferentSynapses.Add(this, totalStrength / contributors);
+                connexions++;
+
+                }
             }
 
             foreach (SpikingNeuron n in oldSources)
@@ -116,7 +132,11 @@ namespace SpikingNeurons
             foreach (SpikingNeuron n in newDestinations)
             {
                 if (n.efferentSynapses[this] > 0) // feedback on exitation only
-                    lock (this) { this.efferentSynapses.Add(n, n.efferentSynapses[this] * -1.0); }
+                    lock (this)
+                    {
+                        this.efferentSynapses.Add(n, n.efferentSynapses[this] * -1.0);
+                        connexions++;
+                    }
             }
 
             foreach (SpikingNeuron n in oldDestinations)
@@ -175,6 +195,8 @@ namespace SpikingNeurons
                             try
                             {
                                 efferentSynapses.Add(concurrent, fabric.Treshold * proportionalStrength);
+                                connexions++;
+
                             }
                             catch (System.ArgumentException e)
                             {

@@ -52,6 +52,7 @@ namespace SpikingNeurons
         {
             get { return neurons; }
         }
+        
     }
 
     public class Fibre:NeuronFamily

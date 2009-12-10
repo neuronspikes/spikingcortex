@@ -36,8 +36,9 @@ namespace CortexViewer
             fabricInputImage.Source = simulation.inputPicture.Bitmap;
             fabricOutputImage.Source = simulation.outputPicture.Bitmap;
 
-            LeakSlider.Value = simulation.fab.Leak;
-            SpikeEffectSlider.Value = simulation.fab.SpikeEffect;
+            ExitationLeakSlider.Value = simulation.fab.ExitationLeak;
+            InhibitionLeakSlider.Value = simulation.fab.InhibitionLeak;
+            SpikeEffectSlider.Value = simulation.udpInput.SpikeWeight;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -50,13 +51,23 @@ namespace CortexViewer
             if(simulation != null)simulation.interval = ((int)e.NewValue);
         }
 
-        private void LeakSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void ExitationLeakSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             double leak=1.0/((double)e.NewValue);
             if (simulation != null)
             {
-                simulation.fab.Leak = leak;
-                LeakText.Content = "leak = "+leak;
+                simulation.fab.ExitationLeak = leak;
+                LeakText.Content = "Exitation leak = "+leak;
+            }
+        }
+
+        private void InhibitionLeakSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double leak = 1.0 / ((double)e.NewValue);
+            if (simulation != null)
+            {
+                simulation.fab.InhibitionLeak = leak;
+                LeakText.Content = "inhibition leak = " + leak;
             }
         }
 
@@ -64,8 +75,8 @@ namespace CortexViewer
         {
             if (simulation != null)
             {
-                simulation.fab.SpikeEffect = ((int)e.NewValue);
-                ExitationText.Content = "spike effect = "+e.NewValue;
+                simulation.udpInput.SpikeWeight = ((double)e.NewValue);
+                ExitationText.Content = "spike weight = "+e.NewValue;
             }
         }
 

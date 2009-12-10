@@ -12,18 +12,20 @@
             <ColumnDefinition Name="Input" Width="50*" ></ColumnDefinition>
             <ColumnDefinition Name="Output" Width="50*" ></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Image Grid.Column="0" Margin="12,0,12,0" Name="fabricInputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+        <Image Margin="142,0,12,0" Name="fabricInputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
         <Image Grid.Column="1" Margin="0,0,0,0" Name="fabricOutputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-        <GridSplitter Grid.Column="1"  HorizontalAlignment="Left" Name="gridSplitter1" Width="10" Margin="0,0,0,12" VerticalAlignment="Stretch" Grid.Row="1" />
-        <StatusBar Margin="0,0,0,2" Name="statusBar1" Grid.ColumnSpan="2" />
-        <Slider Margin="224,0,215,0" Name="IntervalSlider" Cursor="IBeam" Maximum="1000" Value="4" ValueChanged="IntervalSlider_ValueChanged" Minimum="1" ToolTip="Interval" TickPlacement="TopLeft" TickFrequency="100" />
-        <Slider Margin="12,0,0,3" HorizontalAlignment="Left" Width="100" Background="LightGreen" LargeChange="0.1" Maximum="1" SmallChange="0.01" Value="1" TickFrequency="0.1" ToolTip="Exitation" ValueChanged="ExitationSlider_ValueChanged" TickPlacement="TopLeft" Name="SpikeEffectSlider" />
-        <Slider Margin="118,0,0,3" Name="LeakSlider" HorizontalAlignment="Left" Width="100" Background="DarkViolet" Maximum="1.25" LargeChange="0.1" SmallChange="0.001" TickFrequency="0.1" Value="1.1" ToolTip="Inhibition" Minimum="1" TickPlacement="TopLeft" ValueChanged="LeakSlider_ValueChanged" />
-        <Label Grid.RowSpan="2" Height="28" Margin="330,0,12,0" Name="Msg" VerticalAlignment="Top" Grid.ColumnSpan="2">Messages</Label>
-        <CheckBox Grid.Column="1" HorizontalAlignment="Left" Margin="25,0,0,6" Name="LearnConcurrencyCheckBox" Width="120" Height="18" VerticalAlignment="Bottom" Checked="LearnConcurrencyCheckBox_Checked" Unchecked="LearnConcurrencyCheckBox_Unchecked">Learn concurrency</CheckBox>
-        <CheckBox Margin="457,0,0,6" Name="FeedBackCheckBox" Grid.ColumnSpan="2" Height="18" VerticalAlignment="Bottom" Checked="FeedBackCheckBox_Checked" HorizontalAlignment="Left" Width="120" Unchecked="FeedBackCheckBox_Unchecked">Learn feed-back</CheckBox>
-        <CheckBox Margin="330,0,0,6" Name="LearnConceptsCheckBox" Height="18" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="121" Checked="LearnConceptsCheckBox_Checked" Unchecked="LearnConceptsCheckBox_Unchecked">Learn new concepts</CheckBox>
-        <Label Margin="0,16,321,6" Name="LeakText" HorizontalAlignment="Right" Width="100">LeakText</Label>
-        <Label Margin="12,16,0,6" Name="ExitationText" HorizontalAlignment="Left" Width="100">ExitationText</Label>
+        <GridSplitter HorizontalAlignment="Right" Name="gridSplitter1" Width="10" Margin="0,0,0,12" Grid.Row="1" />
+        <StatusBar Margin="0,0,0,0" Name="statusBar1"   Grid.ColumnSpan="2"/>
+        <Slider Margin="0,178,0,209" Name="IntervalSlider" Cursor="IBeam" Maximum="1000" Value="4" ValueChanged="IntervalSlider_ValueChanged" Minimum="1" ToolTip="Interval" TickPlacement="TopLeft" TickFrequency="100" Background="Gray" HorizontalAlignment="Left" Width="101" Grid.Row="1" />
+        <Slider HorizontalAlignment="Left" Width="100" Background="LightBlue" LargeChange="0.1" Maximum="1" SmallChange="0.01" Value="1" TickFrequency="0.1" ToolTip="Exitation" ValueChanged="ExitationSlider_ValueChanged" TickPlacement="TopLeft" Name="SpikeEffectSlider" Height="54" VerticalAlignment="Top" Delay="100" Margin="0,6,0,0" Grid.Row="1" />
+        <Slider Margin="0,66,0,0" Name="ExitationLeakSlider" HorizontalAlignment="Left" Width="100" Background="LightGreen" Maximum="2" LargeChange="0.1" SmallChange="0.001" TickFrequency="0.1" Value="1.1" ToolTip="Exitation Leak" Minimum="1" TickPlacement="TopLeft" Height="50" VerticalAlignment="Top" Grid.Row="1" ValueChanged="ExitationLeakSlider_ValueChanged" />
+        <Label Margin="142,16,200,6" Name="Msg" Grid.ColumnSpan="2">Messages</Label>
+        <CheckBox Name="LearnConcurrencyCheckBox" Height="18" VerticalAlignment="Bottom" Checked="LearnConcurrencyCheckBox_Checked" Unchecked="LearnConcurrencyCheckBox_Unchecked" HorizontalAlignment="Left" Width="120">Learn concurrency</CheckBox>
+        <CheckBox Margin="0,17,0,15" Name="FeedBackCheckBox" Checked="FeedBackCheckBox_Checked" Unchecked="FeedBackCheckBox_Unchecked" HorizontalAlignment="Left" Width="120">Learn feed-back</CheckBox>
+        <CheckBox Margin="0,3,0,0" Name="LearnConceptsCheckBox" Checked="LearnConceptsCheckBox_Checked" Unchecked="LearnConceptsCheckBox_Unchecked" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="121">Learn new concepts</CheckBox>
+        <Label Margin="0,88,0,0" Name="LeakText" HorizontalAlignment="Left" Width="100" Height="28" VerticalAlignment="Top" Grid.Row="1">Leak</Label>
+        <Label Margin="0,32,0,0" Name="ExitationText" HorizontalAlignment="Left" Width="100" Height="28" Grid.Row="1" VerticalAlignment="Top">Exitation</Label>
+        <Slider Background="LightPink" Height="50" HorizontalAlignment="Left" LargeChange="0.1" Margin="0,122,0,0" Maximum="2" Minimum="1" Name="InhibitionLeakSlider" SmallChange="0.001" TickFrequency="0.1" TickPlacement="TopLeft" ToolTip="Inhibition Leak" Value="1.1" VerticalAlignment="Top" Width="100" Grid.Row="1" ValueChanged="InhibitionLeakSlider_ValueChanged" />
+        <Label HorizontalAlignment="Left" Margin="0,144,0,0" Name="InhibitionLeakLabel" Width="100" Height="28" Grid.Row="1" VerticalAlignment="Top">Leak</Label>
     </Grid>
 </Window>

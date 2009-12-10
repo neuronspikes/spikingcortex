@@ -33,7 +33,7 @@ namespace SpikingNeurons
         {
             get { return connexions; }
         }
-
+        private double maxState = 0, minState = 0;
         private double state = 0;
         /// <summary>
         /// The internal neuron state
@@ -68,9 +68,15 @@ namespace SpikingNeurons
             bool spike;
             lock (this)
             {
+                if (state > maxState) maxState = state;
+                if (state < minState) minState = state;
+
                 spike = state >= fabric.Treshold;
                 if (spike) state = 0;
-                else state *= fabric.Leak;
+                else
+                {
+                    state *= (state>0?fabric.ExitationLeak:fabric.InhibitionLeak);
+                }
                 spiked = spike;// keep trace to debug
             }
             return spike;
@@ -116,7 +122,7 @@ namespace SpikingNeurons
 
         /// <summary>
         /// Develop feedback connexions
-        /// Update inhibition on sources in proportion of their contribution (suppose converse relationship)
+        /// Update onr creates inhibition connexions on sources in proportion of their contribution (suppose converse relationship)
         /// No positive feedback allowed
         /// </summary>
         /// <param name="sources"> Sources of exitation to inhibit. Each one is confirmed 
@@ -134,26 +140,25 @@ namespace SpikingNeurons
                 if (n.efferentSynapses[this] > 0) // feedback on exitation only
                     lock (this)
                     {
-                        this.efferentSynapses.Add(n, n.efferentSynapses[this] * -1.0);
+                        this.efferentSynapses.Add(n, n.maxState * -1.0);
                         connexions++;
                     }
             }
 
             foreach (SpikingNeuron n in oldDestinations)
             {
-                if (n.efferentSynapses[this] > 0) // feedback on exitation source only
+                if (n.efferentSynapses[this] > 0.0) // feedback on exitation source only
                 {
                     lock (n)
                     {
-                        if (this.efferentSynapses[n] > 0)// Should already be on an inhibition relationship, otherwise monostable
+                        if (this.efferentSynapses[n] < 0.0)// Should already be on an inhibition relationship, otherwise monostable
                         {
-                            // balance between existing and proposed feedback
-
-                            this.efferentSynapses[n] = n.efferentSynapses[this] * -1.0;
+                            // select between existing and proposed feedback, keep stronger
+                            double inhibition = n.maxState * -1.0;
+                            this.efferentSynapses[n] = inhibition;
                         }
-                        //else Console.WriteLine("SEVERE WARNING : Contradiction on applying feedback from neuron "+this.Id
-                        //+ " to neuron " + n.Id + " , which is an exitation relationship. Change not applied even if this means positive feedback loop (infinite loop!).");
-                        // >>>>REMOVED>>>> this error needs investigation, but it to common to be a correct constraint
+                        else Console.WriteLine("SEVERE WARNING : Contradiction on applying feedback from neuron "+this.Id
+                        + " to neuron " + n.Id + " , which is an exitation relationship. Change not applied even if this means positive feedback loop (infinite loop!).");
                     }
                 }
             }
@@ -177,15 +182,16 @@ namespace SpikingNeurons
                 {
                     if (concurrent != this)
                     {
-                        if (efferentSynapses.Keys.Contains<SpikingNeuron>(concurrent))
+                        double inhibition = concurrent.fabric.Treshold * proportionalStrength;
+
+                        if (efferentSynapses.Keys.Contains<SpikingNeuron>(concurrent))// already known as concurrent
                         {
 
                             if (efferentSynapses[concurrent] < 0)// only for inhibition
                             {
-                                double diff = efferentSynapses[concurrent] - fabric.Treshold * proportionalStrength;
-                                if (diff > 0) // do not attenuate inhibition!
+                                if (efferentSynapses[concurrent] > proportionalStrength) // keep stronger inhibition!
                                 {
-                                    efferentSynapses[concurrent] -= diff;
+                                    efferentSynapses[concurrent] = inhibition;
                                 }
                             }
                         }
@@ -194,7 +200,7 @@ namespace SpikingNeurons
 
                             try
                             {
-                                efferentSynapses.Add(concurrent, fabric.Treshold * proportionalStrength);
+                                efferentSynapses.Add(concurrent, inhibition);
                                 connexions++;
 
                             }

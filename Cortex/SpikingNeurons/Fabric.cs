@@ -39,7 +39,8 @@ namespace SpikingNeurons
 
             treshold = 1;
             spikeEffect = 0; // spikes do reset neuron state
-            leak = 0.9; // neurons have little leak
+            exitationLeak = 0.5; // neurons have strong exitation leak
+            inhibitionLeak = 0.9; // neurons have little inhibition leak
         }
 
         private static int notLearning = 0;
@@ -86,16 +87,27 @@ namespace SpikingNeurons
         /// 1 = no leakage = static state
         /// 0 = total leakage = state lost instantly after frame processing
         /// </summary>
-        public double Leak
+        public double ExitationLeak
         {
-            get { return leak; }
+            get { return exitationLeak; }
             set
             {
                 if (value < 0 || value > 1) throw new InvalidOperationException();
-                leak = value;
+                exitationLeak = value;
             }
         }
-        private double leak;
+        private double exitationLeak;
+
+        public double InhibitionLeak
+        {
+            get { return inhibitionLeak; }
+            set
+            {
+                if (value < 0 || value > 1) throw new InvalidOperationException();
+                inhibitionLeak = value;
+            }
+        }
+        private double inhibitionLeak;
 
         // input interfaces
         private Dictionary<string, InputFibre> inputFibres;

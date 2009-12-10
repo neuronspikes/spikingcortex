@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpikingNeurons", "SpikingNeurons\SpikingNeurons.csproj", "{58A86E7B-5B98-44F6-9606-EB60FC3D76C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CortexViewer", "CortexViewer\CortexViewer.csproj", "{A0C180EA-C1D3-4F4B-8E55-0CB5C753910C}"

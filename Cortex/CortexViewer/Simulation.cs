@@ -30,7 +30,7 @@ namespace CortexViewer
            
 
             // tuning for 8bit grayscalse picture
-            fab.Leak = 254.0 / 256.0;
+            fab.ExitationLeak = 254.0 / 256.0;
             udpInput.SpikeWeight = 64.0 /256.0;
 
             inputPicture = new PictureNeuronStates(64, 64, fab.getInputFibre("testudp").Neurons);

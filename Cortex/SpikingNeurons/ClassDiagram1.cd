@@ -3,7 +3,7 @@
   <Class Name="SpikingNeurons.Fabric">
     <Position X="0.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAAgAAAQYQAAAAACIAgAEAAACAAgAABCAAAAQAQAQAA=</HashCode>
+      <HashCode>BgAgAAAQYQAAAAICIoACUACACAEkAABCEABAQAYQAAE=</HashCode>
       <FileName>Fabric.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -41,14 +41,14 @@
   <Class Name="SpikingNeurons.SpikingNeuron">
     <Position X="7.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAgAAAAIIAIAAAQEAAAAAAACAAEAAAAJABAQgA=</HashCode>
+      <HashCode>AAACAAAgAAAAIIQIBAAUEAQAAAAACAAEAQAAJABBQgA=</HashCode>
       <FileName>SpikingNeuron.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SpikingNeurons.UDPSpikingInputs">
     <Position X="5" Y="8" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>IAAAAgAAAAAAgEBAAAAAAAAAAgCCCAAAAAAAAAAgAAA=</HashCode>
+      <HashCode>IAAAAgAAAAAAgEBAAAAAAAAAAgACCAAAAAAAAAAgAAA=</HashCode>
       <FileName>UDPSpikingInputs.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -62,7 +62,7 @@
   <Class Name="SpikingNeurons.UDPSpikingOutput">
     <Position X="3" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAABAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <HashCode>IAAAABAAAAAAAAAAAAAAAAAAAAAAAAgAAAAABABAAAA=</HashCode>
       <FileName>UDPSpikingOutput.cs</FileName>
     </TypeIdentifier>
   </Class>

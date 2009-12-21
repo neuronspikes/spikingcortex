@@ -19,7 +19,7 @@ namespace SpikingNeurons
     /// </summary>
     public class SpikingNeuron
     {
-        Fabric fabric;
+        Fibre fibre;
         Dictionary<SpikingNeuron, double> efferentSynapses;
 
         protected static long count=0;
@@ -49,10 +49,10 @@ namespace SpikingNeurons
         /// <summary>
         /// constructor
         /// </summary>
-        /// <param name="f">Fabric that own this neuron. Defines its affinities, rates and treshold.</param>
-        public SpikingNeuron(Fabric f)
+        /// <param name="f">Fibre that own this neuron. Defines its affinities, rates and treshold.</param>
+        public SpikingNeuron(Fibre f)
         {
-            fabric = f;
+            fibre = f;
             efferentSynapses = new Dictionary<SpikingNeuron, double>();
             id = idCount++;
             count++;
@@ -63,7 +63,7 @@ namespace SpikingNeurons
         /// A slice of life to compute state.
         /// </summary>
         /// <returns></returns>
-        new public bool processAndSee()
+        public bool processAndSee()
         {
             bool spike;
             lock (this)
@@ -71,11 +71,11 @@ namespace SpikingNeurons
                 if (state > maxState) maxState = state;
                 if (state < minState) minState = state;
 
-                spike = state >= fabric.Treshold;
+                spike = state >= fibre.Treshold;
                 if (spike) state = 0;
                 else
                 {
-                    state *= (state>0?fabric.ExitationLeak:fabric.InhibitionLeak);
+                    state *= (state>0?fibre.ExitationLeak:fibre.InhibitionLeak);
                 }
                 spiked = spike;// keep trace to debug
             }
@@ -129,7 +129,7 @@ namespace SpikingNeurons
         /// as a positive contributor before applying inhibition relation.</param>
         public void updateFeedbackRelations(List<SpikingNeuron> sources)
         {
-            var requiresFeedback = from neuron in sources where neuron.efferentSynapses.Keys.Contains<SpikingNeuron>(this) select neuron;
+            var requiresFeedback = from neuron in sources where neuron.efferentSynapses.Keys.Contains<SpikingNeuron>(this) && neuron.fibre != this.fibre select neuron;
 
             // TODO: easy to optimize with a single loop that use parallel framework
             var newDestinations = from neuron in requiresFeedback where !this.efferentSynapses.Keys.Contains<SpikingNeuron>(neuron) select neuron;
@@ -170,8 +170,10 @@ namespace SpikingNeurons
         /// </summary>
         /// <param name="targets">Neurons in concurrence</param>
         /// <param name="proportionalStrength">(negative)charge applied in proportion to targets tresholds.</param>
-        public void updateConcurrencyRelations(List<SpikingNeuron> concurrents, double proportionalStrength)
+        public void updateConcurrencyRelations(List<SpikingNeuron> cooccurrents, double proportionalStrength)
         {
+            var concurrents = from neuron in cooccurrents where neuron.fibre == this.fibre  select neuron;
+
             if (proportionalStrength > 0) throw new InvalidOperationException("Inhibition is limited to negative strength.");
 
             // TODO: easy to optimize with a single loop that use parallel framework
@@ -182,7 +184,7 @@ namespace SpikingNeurons
                 {
                     if (concurrent != this)
                     {
-                        double inhibition = concurrent.fabric.Treshold * proportionalStrength;
+                        double inhibition = concurrent.fibre.Treshold * proportionalStrength;
 
                         if (efferentSynapses.Keys.Contains<SpikingNeuron>(concurrent))// already known as concurrent
                         {
@@ -214,13 +216,13 @@ namespace SpikingNeurons
             }
         }
 
-        public void spikeFromExternal(InputFibre fiber)
+        public void addCharge(double charge)
         {
             lock (this)
             {
                 // add fiber defined charge (non-targetted uniform weight)
                 // inhibition still applies
-                this.state += fiber.SpikeWeight;
+                this.state += charge;
             }
         }
         /// <summary>

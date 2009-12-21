@@ -7,16 +7,16 @@ using System.Net.NetworkInformation;
 
 namespace SpikingNeurons
 {
-    public class UDPSpikingOutput: OutputFibre
+    public class UDPSpikingOutput
     {
         private int port;
         private string destination;
         UdpClient udpClient;
-        Fabric fabric;
+        Fibre fibre;
 
-        public UDPSpikingOutput(Fabric fabric, string destination, int port)
+        public UDPSpikingOutput(Fibre fabric, string destination, int port)
         {
-            this.fabric = fabric;
+            this.fibre = fabric;
             this.destination = destination;
             this.port = port;
             udpClient = new UdpClient(destination, port);
@@ -26,7 +26,7 @@ namespace SpikingNeurons
         {
             List<byte> stream = new List<byte>();
             int neuronIndex=0, streamIndex=0;
-            foreach( SpikingNeuron n in fabric.Outputs){
+            foreach( SpikingNeuron n in fibre.Neurons){
                 if(n.Spiked){
                     while (neuronIndex < (streamIndex+255))
                     {

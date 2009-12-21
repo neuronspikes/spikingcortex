@@ -8,11 +8,10 @@ using System.Net.NetworkInformation;
 
 namespace SpikingNeurons
 {
-    public class UDPSpikingInputs : InputFibre
+    public class UDPSpikingInputs : Fibre
     {
         UdpClient udpClient;
         IPEndPoint RemoteIpEndPoint;
-        int lastCount;
 
         public int Size
         {
@@ -20,21 +19,28 @@ namespace SpikingNeurons
             set { size = value; }
         }
 
-        public UDPSpikingInputs(Fabric fabric, string name, int size, int port)
+        private double spikeWeight;
+
+        public double SpikeWeight
+        {
+            get { return spikeWeight; }
+            set { spikeWeight = value; }
+        }
+
+        public UDPSpikingInputs(string name, int size, int port)
         {
             this.size = size;
             this.name = name;
             neurons = new List<SpikingNeuron>();
             for (int i = 0; i < size; i++)
             {
-                neurons.Add(new SpikingNeuron(fabric));
+                lock(neurons) neurons.Add(new SpikingNeuron(this));
             }
 
             //IPEndPoint object will allow us to read datagrams sent from any source.
             RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, port);
             // Receive a message and write it to the console.
             udpClient = new UdpClient(RemoteIpEndPoint);
-            fabric.connectInputFibre(this);
             udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), this);
         }
 
@@ -71,7 +77,7 @@ namespace SpikingNeurons
                 {
                     adrs += code; // since zero have a meaning...
                     if (adrs < size)
-                        neurons[adrs-1].spikeFromExternal(this); // trigger spike
+                        neurons[adrs - 1].addCharge(spikeWeight); // trigger spike
                     count++;
                 }
             }
@@ -83,7 +89,7 @@ namespace SpikingNeurons
             {
                 SpikingNeuron t = neurons[code];
 
-                t.spikeFromExternal(this); // trigger spike
+                t.addCharge(spikeWeight); // trigger spike
             }
         }
 
@@ -99,7 +105,7 @@ namespace SpikingNeurons
                     SpikingNeuron t = neurons[adrs++];
 
                     for (byte pow = 0; pow < code; pow++)
-                        t.spikeFromExternal(this); // trigger spike
+                        t.addCharge(spikeWeight); // trigger spike
                 }
             }
         }

@@ -73,9 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fabric.cs" />
-    <Compile Include="InputFibre.cs" />
     <Compile Include="SpikingNeuron.cs" />
-    <Compile Include="OutputFibre.cs" />
     <Compile Include="Fibre.cs" />
     <Compile Include="UDPSpikingInputs.cs" />
     <Compile Include="UDPSpikingOutput.cs" />

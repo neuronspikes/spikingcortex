@@ -100,7 +100,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="NeuronFabricImage.cs" />
+    <Compile Include="NeuronFibreImage.cs" />
     <Compile Include="Simulation.cs" />
   </ItemGroup>
   <ItemGroup>

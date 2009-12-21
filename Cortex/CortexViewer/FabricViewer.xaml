@@ -1,7 +1,7 @@
 ﻿<Window x:Class="CortexViewer.FabricViewer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="SpikingCortexFabricViewer" Height="525" Width="1100" Closing="Window_Closing">
+    Title="SpikingCortexFabricViewer" Height="323" Width="762" Closing="Window_Closing">
     <Grid Name="fabricViewGrid"  SnapsToDevicePixels="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Black">
         <Grid.RowDefinitions>
             <RowDefinition Height="50
@@ -9,23 +9,24 @@
             <RowDefinition Height="500*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Name="Input" Width="50*" ></ColumnDefinition>
-            <ColumnDefinition Name="Output" Width="50*" ></ColumnDefinition>
+            <ColumnDefinition Name="Input" Width="434*" ></ColumnDefinition>
+            <ColumnDefinition Name="Output" Width="306*" ></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Image Margin="142,0,12,0" Name="fabricInputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-        <Image Grid.Column="1" Margin="0,0,0,0" Name="fabricOutputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-        <GridSplitter HorizontalAlignment="Right" Name="gridSplitter1" Width="10" Margin="0,0,0,12" Grid.Row="1" />
-        <StatusBar Margin="0,0,0,0" Name="statusBar1"   Grid.ColumnSpan="2"/>
-        <Slider Margin="0,178,0,209" Name="IntervalSlider" Cursor="IBeam" Maximum="1000" Value="4" ValueChanged="IntervalSlider_ValueChanged" Minimum="1" ToolTip="Interval" TickPlacement="TopLeft" TickFrequency="100" Background="Gray" HorizontalAlignment="Left" Width="101" Grid.Row="1" />
+        <Image Margin="107,0,16,0" Name="fabricInputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+        <Image Margin="0,5,0,0" Name="fabricOutputImage" Stretch="Uniform" Grid.Row="1" RenderOptions.BitmapScalingMode="NearestNeighbor" Grid.Column="1" />
+        <GridSplitter HorizontalAlignment="Right" Name="gridSplitter1" Width="10" Margin="0,5,0,7" Grid.Row="1" />
+        <StatusBar Name="statusBar1"   Grid.ColumnSpan="2"/>
+        <Slider Margin="0,178,0,0" Name="IntervalSlider" Cursor="IBeam" Maximum="1000" Value="4" ValueChanged="IntervalSlider_ValueChanged" Minimum="1" ToolTip="Interval" TickPlacement="TopLeft" TickFrequency="100" Background="Gray" HorizontalAlignment="Left" Width="101" Grid.Row="1" Height="49" VerticalAlignment="Top" />
         <Slider HorizontalAlignment="Left" Width="100" Background="LightBlue" LargeChange="0.1" Maximum="1" SmallChange="0.01" Value="1" TickFrequency="0.1" ToolTip="Exitation" ValueChanged="ExitationSlider_ValueChanged" TickPlacement="TopLeft" Name="SpikeEffectSlider" Height="54" VerticalAlignment="Top" Delay="100" Margin="0,6,0,0" Grid.Row="1" />
         <Slider Margin="0,66,0,0" Name="ExitationLeakSlider" HorizontalAlignment="Left" Width="100" Background="LightGreen" Maximum="2" LargeChange="0.1" SmallChange="0.001" TickFrequency="0.1" Value="1.1" ToolTip="Exitation Leak" Minimum="1" TickPlacement="TopLeft" Height="50" VerticalAlignment="Top" Grid.Row="1" ValueChanged="ExitationLeakSlider_ValueChanged" />
-        <Label Margin="142,16,200,6" Name="Msg" Grid.ColumnSpan="2">Messages</Label>
+        <Label Margin="127,0,0,0" Name="Msg" Grid.ColumnSpan="2" FontSize="8">Messages</Label>
         <CheckBox Name="LearnConcurrencyCheckBox" Height="18" VerticalAlignment="Bottom" Checked="LearnConcurrencyCheckBox_Checked" Unchecked="LearnConcurrencyCheckBox_Unchecked" HorizontalAlignment="Left" Width="120">Learn concurrency</CheckBox>
         <CheckBox Margin="0,17,0,15" Name="FeedBackCheckBox" Checked="FeedBackCheckBox_Checked" Unchecked="FeedBackCheckBox_Unchecked" HorizontalAlignment="Left" Width="120">Learn feed-back</CheckBox>
         <CheckBox Margin="0,3,0,0" Name="LearnConceptsCheckBox" Checked="LearnConceptsCheckBox_Checked" Unchecked="LearnConceptsCheckBox_Unchecked" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Width="121">Learn new concepts</CheckBox>
-        <Label Margin="0,88,0,0" Name="LeakText" HorizontalAlignment="Left" Width="100" Height="28" VerticalAlignment="Top" Grid.Row="1">Leak</Label>
-        <Label Margin="0,32,0,0" Name="ExitationText" HorizontalAlignment="Left" Width="100" Height="28" Grid.Row="1" VerticalAlignment="Top">Exitation</Label>
+        <Label Margin="0,88,0,0" Name="ExitationLeakLabel" HorizontalAlignment="Left" Width="100" Height="28" VerticalAlignment="Top" Grid.Row="1" ClipToBounds="False" FontSize="8">Exitation Leak</Label>
+        <Label Margin="0,32,0,0" Name="ExitationText" HorizontalAlignment="Left" Width="100" Height="28" Grid.Row="1" VerticalAlignment="Top" FontSize="8">Input Exitation</Label>
         <Slider Background="LightPink" Height="50" HorizontalAlignment="Left" LargeChange="0.1" Margin="0,122,0,0" Maximum="2" Minimum="1" Name="InhibitionLeakSlider" SmallChange="0.001" TickFrequency="0.1" TickPlacement="TopLeft" ToolTip="Inhibition Leak" Value="1.1" VerticalAlignment="Top" Width="100" Grid.Row="1" ValueChanged="InhibitionLeakSlider_ValueChanged" />
-        <Label HorizontalAlignment="Left" Margin="0,144,0,0" Name="InhibitionLeakLabel" Width="100" Height="28" Grid.Row="1" VerticalAlignment="Top">Leak</Label>
+        <Label HorizontalAlignment="Left" Margin="0,144,0,0" Name="InhibitionLeakLabel" Width="100" Height="28" Grid.Row="1" VerticalAlignment="Top" FontSize="8">Inhibition Leak</Label>
+        <Label Content="Interval" Grid.Row="1" Height="28" HorizontalAlignment="Left" Margin="11,201,0,0" Name="IntervalLabel" VerticalAlignment="Top" Width="120" FontSize="8" />
     </Grid>
 </Window>

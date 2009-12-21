@@ -28,17 +28,18 @@ namespace CortexViewer
         {
             InitializeComponent();
 
-            // pre initialization
+            // Load model
             simulation = new Simulation(this);
 
-  
-            // bind moving image sources
+            // bind views
             fabricInputImage.Source = simulation.inputPicture.Bitmap;
             fabricOutputImage.Source = simulation.outputPicture.Bitmap;
 
-            ExitationLeakSlider.Value = simulation.fab.ExitationLeak;
-            InhibitionLeakSlider.Value = simulation.fab.InhibitionLeak;
+            // initialize sliders to effective values
+            ExitationLeakSlider.Value = simulation.udpInput.ExitationLeak;
+            InhibitionLeakSlider.Value = simulation.udpInput.InhibitionLeak;
             SpikeEffectSlider.Value = simulation.udpInput.SpikeWeight;
+            IntervalSlider.Value = simulation.interval;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -48,7 +49,11 @@ namespace CortexViewer
 
         private void IntervalSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if(simulation != null)simulation.interval = ((int)e.NewValue);
+            if (simulation != null)
+            {
+                simulation.interval = ((int)e.NewValue);
+                IntervalLabel.Content="Interval = " + simulation.interval + "ms";
+            }
         }
 
         private void ExitationLeakSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -56,8 +61,8 @@ namespace CortexViewer
             double leak=1.0/((double)e.NewValue);
             if (simulation != null)
             {
-                simulation.fab.ExitationLeak = leak;
-                LeakText.Content = "Exitation leak = "+leak;
+                simulation.udpInput.ExitationLeak = leak;
+                ExitationLeakLabel.Content = "Exitation retention =" + leak.ToString("F");
             }
         }
 
@@ -66,8 +71,8 @@ namespace CortexViewer
             double leak = 1.0 / ((double)e.NewValue);
             if (simulation != null)
             {
-                simulation.fab.InhibitionLeak = leak;
-                LeakText.Content = "inhibition leak = " + leak;
+                simulation.udpInput.InhibitionLeak = leak;
+                this.InhibitionLeakLabel.Content = "Inhibition retention =" + leak.ToString("F");
             }
         }
 
@@ -76,7 +81,7 @@ namespace CortexViewer
             if (simulation != null)
             {
                 simulation.udpInput.SpikeWeight = ((double)e.NewValue);
-                ExitationText.Content = "spike weight = "+e.NewValue;
+                ExitationText.Content = "Spike weight =" + ((double)e.NewValue).ToString("F");
             }
         }
 

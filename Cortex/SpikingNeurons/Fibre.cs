@@ -6,10 +6,10 @@ using System.Text;
 namespace SpikingNeurons
 {
     /// <summary>
-    /// Neuron Fibre
+    /// Neuron Fibre2
     /// (CC) Stéphane Denis
     /// 
-    /// Fibre is the notion of neuron grouping.
+    /// Fibre2 is the notion of neuron grouping.
     /// It defines its basis relationship to other groups.
     /// 
     ///<!-- Creative Commons License -->
@@ -18,8 +18,16 @@ namespace SpikingNeurons
     ///This software is licensed under the <a href="http://creativecommons.org/licenses/GPL/2.0/">CC-GNU GPL</a> version 2.0 or later.
     ///<!-- /Creative Commons License -->
     /// </summary>
-    public class NeuronFamily
+    public class Fibre
     {
+        public Fibre()
+        {
+            treshold = 1.0;
+            spikeEffect = 0; // spikes do reset neuron state
+            exitationLeak = 1.0; // neurons have no exitation leak
+            inhibitionLeak = 0.9; // neurons have little inhibition leak
+
+        }
         /// <summary>
         /// ReadOnly 
         /// </summary>
@@ -31,8 +39,8 @@ namespace SpikingNeurons
 
         protected int size;
         /// <summary>
-        /// Limit the resources allocated to this fibre.
-        /// This is the maximum number of neuron this fibre can handle.
+        /// Limit the resources allocated to this Fibre.
+        /// This is the maximum number of neuron this Fibre can handle.
         /// 
         /// This constraint have an impact on the quality of learning and communication
         /// by 
@@ -45,17 +53,76 @@ namespace SpikingNeurons
             set { sizeConstraint = value; }
         }
         private int sizeConstraint;
+ 
+        /// <summary>
+        /// characteristics of constituants neurons
+        /// determines when spike occurs = state >= treshold
+        /// </summary>
+        public double Treshold
+        {
+            get { return treshold; }
+            set
+            {
+                if (value < 0) throw new InvalidOperationException();
+                treshold = value;
+            }
+        }
+        private double treshold;
+
+        /// <summary>
+        /// What happen to the state when spiking
+        /// Spike Effect is applied by multiplying state by this
+        /// </summary>
+        public double SpikeEffect
+        {
+            get { return spikeEffect; }
+            set
+            {
+                if (value < 0 || value > 1) throw new InvalidOperationException();
+                spikeEffect = value;
+            }
+        }
+        private double spikeEffect;
+
+        /// <summary>
+        /// Leaking allows temporal consideration
+        /// leaking is applied by multiplying state by leak : 
+        /// 1 = no leakage = static state
+        /// 0 = total leakage = state lost instantly after frame processing
+        /// </summary>
+        public double ExitationLeak
+        {
+            get { return exitationLeak; }
+            set
+            {
+                if (value < 0 || value > 1) throw new InvalidOperationException();
+                exitationLeak = value;
+            }
+        }
+        private double exitationLeak;
+
+        public double InhibitionLeak
+        {
+            get { return inhibitionLeak; }
+            set
+            {
+                if (value < 0 || value > 1) throw new InvalidOperationException();
+                inhibitionLeak = value;
+            }
+        }
+        private double inhibitionLeak;
 
         protected List<SpikingNeuron> neurons;
-
-        public List<SpikingNeuron> Neurons
+        public IEnumerable<SpikingNeuron> Neurons
         {
-            get { return neurons; }
+            get { return neurons.AsEnumerable(); }
         }
-        
-    }
 
-    public class Fibre:NeuronFamily
-    {
+        /// <summary>
+        /// previously spiked and newly spiked lists are not limited
+        /// to the current fibre, but neurons included in the frame processing
+        /// </summary>
+        protected List<SpikingNeuron> previouslySpiked;
+        protected List<SpikingNeuron> newlySpiked;
     }
 }

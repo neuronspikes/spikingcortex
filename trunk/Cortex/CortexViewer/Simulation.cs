@@ -12,7 +12,7 @@ namespace CortexViewer
     {
         public bool stop = false; // true will stop "Live" thread
         public int interval;
-        public PictureNeuronStates inputPicture, outputPicture;
+        public PictureNeuronFibreStates inputPicture, outputPicture;
         Thread simThread;
  
         FabricViewer viewer;
@@ -26,17 +26,19 @@ namespace CortexViewer
             this.viewer = viewer;
 
             fab = new Fabric("test");
-            udpInput = new UDPSpikingInputs(fab,"testudp", 64*64, 12000);
-           
+            udpInput = new UDPSpikingInputs("testudp", 64*64, 12000);
+            fab.connectInputFibre(udpInput);
 
             // tuning for 8bit grayscalse picture
-            fab.ExitationLeak = 254.0 / 256.0;
+            udpInput.ExitationLeak = 254.0 / 256.0;
             udpInput.SpikeWeight = 64.0 /256.0;
 
-            inputPicture = new PictureNeuronStates(64, 64, fab.getInputFibre("testudp").Neurons);
-            outputPicture = new PictureNeuronStates(64, 64, fab.Outputs);
+            fab.ExitationLeak = 254.0 / 256.0;
 
-            interval = 4; // pause between cycles (in mSec) 
+            inputPicture = new PictureNeuronFibreStates(64, 64, udpInput.Neurons);
+            outputPicture = new PictureNeuronFibreStates(64, 64, fab.Neurons);
+
+            interval = 1; // pause between cycles (in mSec) 
             simThread = new Thread(Live);
             simThread.Start();
         }

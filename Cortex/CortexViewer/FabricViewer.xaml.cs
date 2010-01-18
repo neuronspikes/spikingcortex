@@ -30,6 +30,11 @@ namespace CortexViewer
 
             // Load model
             simulation = new Simulation(this);
+            bindViews();
+        }
+
+        private void bindViews()
+        {
 
             // bind views
             fabricInputImage.Source = simulation.inputPicture.Bitmap;
@@ -115,5 +120,23 @@ namespace CortexViewer
         {
             simulation.fab.CanDevelopConcurrency = false;
         }
+
+        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(this.FileNameTextBox.Text !=null && !"".Equals(this.FileNameTextBox.Text))
+            {
+                this.simulation.loadFabric(this.FileNameTextBox.Text);
+                bindViews();
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+                        if(this.FileNameTextBox.Text !=null && !"".Equals(this.FileNameTextBox.Text))
+            {
+                this.simulation.saveFabric(this.FileNameTextBox.Text);
+            }
+        }
+
     }
 }

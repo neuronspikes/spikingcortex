@@ -5,11 +5,18 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
+using System.Runtime.Serialization;
 
 namespace SpikingNeurons
 {
+    [DataContract(Name = "UDPInput", Namespace = "http://model.NeuronSpikes.org")]
     public class UDPSpikingInputs : Fibre
     {
+        private bool canReceive = false;
+
+        [DataMember]
+        int port;
+
         UdpClient udpClient;
         IPEndPoint RemoteIpEndPoint;
 
@@ -19,8 +26,8 @@ namespace SpikingNeurons
             set { size = value; }
         }
 
+        [DataMember]
         private double spikeWeight;
-
         public double SpikeWeight
         {
             get { return spikeWeight; }
@@ -36,12 +43,26 @@ namespace SpikingNeurons
             {
                 lock(neurons) neurons.Add(new SpikingNeuron(this));
             }
+            this.port = port;
+        }
 
-            //IPEndPoint object will allow us to read datagrams sent from any source.
-            RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, port);
-            // Receive a message and write it to the console.
-            udpClient = new UdpClient(RemoteIpEndPoint);
+        public void StartReceive()
+        {
+            canReceive = true;
+            if (RemoteIpEndPoint == null || udpClient == null)
+            {
+                //IPEndPoint object will allow us to read datagrams sent from any source.
+                RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, port);
+                // Receive a message and write it to the console.
+                udpClient = new UdpClient(RemoteIpEndPoint);
+            }
             udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), this);
+        }
+
+        public void StopReceive()
+        {
+            canReceive = false;
+            udpClient.Close();
         }
 
         public static bool messageReceived = false;
@@ -52,14 +73,24 @@ namespace SpikingNeurons
 
             UDPSpikingInputs usi = (UDPSpikingInputs)(ar.AsyncState);
             UdpClient u = usi.udpClient;
-            IPEndPoint e = usi.RemoteIpEndPoint;
 
-            Byte[] receiveBytes = u.EndReceive(ar, ref e);
+            if (u.Client != null)
+            {
+                IPEndPoint e = usi.RemoteIpEndPoint;
 
-            usi.interpretStreamAsDeltas(receiveBytes);
+                try
+                {
+                    Byte[] receiveBytes = u.EndReceive(ar, ref e);
 
-            // Prepare for next shot
-            usi.udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), usi);
+                    usi.interpretStreamAsDeltas(receiveBytes);
+
+                    // Prepare for next shot
+                    if (usi.canReceive) usi.udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), usi);
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+            }
         }
 
         public void interpretStreamAsDeltas(Byte[] receiveBytes)

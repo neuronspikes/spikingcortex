@@ -4,9 +4,11 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
+using System.Runtime.Serialization;
 
 namespace SpikingNeurons
 {
+    [DataContract(Name = "UDPOutput", Namespace = "http://model.NeuronSpikes.org")]
     public class UDPSpikingOutput
     {
         private int port;

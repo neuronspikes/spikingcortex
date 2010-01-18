@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace SpikingNeurons
 {
@@ -17,7 +18,11 @@ namespace SpikingNeurons
     ///<img alt="CC-GNU GPL" border="0" src="http://creativecommons.org/images/public/cc-GPL-a.png" /></a><br />
     ///This software is licensed under the <a href="http://creativecommons.org/licenses/GPL/2.0/">CC-GNU GPL</a> version 2.0 or later.
     ///<!-- /Creative Commons License -->
-    /// </summary>
+    /// </summary>    
+    [DataContract(Name = "Fabric", Namespace = "http://model.NeuronSpikes.org")]
+    [KnownType(typeof(SpikingNeuron))]
+    [KnownType(typeof(string))]
+    [KnownType(typeof(Fibre))]
     public class Fabric : Fibre
     {
         /// <summary>
@@ -36,9 +41,18 @@ namespace SpikingNeurons
             inputFibres = new Dictionary<string, Fibre>();
             workingSet = new List<SpikingNeuron>();
         }
-        List<SpikingNeuron> workingSet;
-        private static int notLearning = 0;
 
+        /// <summary>
+        /// Used when constructed from deserialization
+        /// </summary>
+        private Fabric() { 
+        }
+
+        [DataMember]
+        List<SpikingNeuron> workingSet;
+
+        [DataMember]
+        private static int notLearning = 0;
         public static int NotLearning
         {
             get { return Fabric.notLearning; }
@@ -46,11 +60,35 @@ namespace SpikingNeurons
         }
 
         // input interfaces
+        [DataMember]
         private Dictionary<string, Fibre> inputFibres;
-
         public Fibre getInputFibre(string name)
         {
             return inputFibres[name];
+        }
+
+        [DataMember]
+        bool canLearnNewConcepts = false;
+        public bool CanLearnNewConcepts
+        {
+            get { return canLearnNewConcepts; }
+            set { canLearnNewConcepts = value; }
+        }
+
+        [DataMember]
+        bool canDevelopConcurrency = false;
+        public bool CanDevelopConcurrency
+        {
+            get { return canDevelopConcurrency; }
+            set { canDevelopConcurrency = value; }
+        }
+
+        [DataMember]
+        bool canDevelopFeedback = false;
+        public bool CanDevelopFeedback
+        {
+            get { return canDevelopFeedback; }
+            set { canDevelopFeedback = value; }
         }
 
         /// <summary>
@@ -60,7 +98,7 @@ namespace SpikingNeurons
         /// <param name="input"></param>
         public void connectInputFibre(Fibre input)
         {
-           
+         
             inputFibres.Add(input.Name, input);
             lock (workingSet) workingSet.AddRange(input.Neurons);
         }
@@ -131,28 +169,6 @@ namespace SpikingNeurons
                 if (canDevelopFeedback) n.updateFeedbackRelations(previouslySpiked);
             }
             ready = true;
-        }
-
-        bool canLearnNewConcepts = false;
-
-        public bool CanLearnNewConcepts
-        {
-            get { return canLearnNewConcepts; }
-            set { canLearnNewConcepts = value; }
-        }
-        bool canDevelopConcurrency = false;
-
-        public bool CanDevelopConcurrency
-        {
-            get { return canDevelopConcurrency; }
-            set { canDevelopConcurrency = value; }
-        }
-        bool canDevelopFeedback = false;
-
-        public bool CanDevelopFeedback
-        {
-            get { return canDevelopFeedback; }
-            set { canDevelopFeedback = value; }
         }
     }
 }

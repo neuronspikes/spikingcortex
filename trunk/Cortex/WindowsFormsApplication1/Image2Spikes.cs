@@ -58,7 +58,9 @@ namespace WindowsFormsApplication1
             // where the sum of 256 packets have covered the intensity of each pixels
             List<int> spikes;
             if(bitmap!=null){
-                spikes = Spikes(bitmap,rnd.Next()%255);// reverse[scan]); // reverse seems a bad idea in a lossless world
+                //spikes = Spikes(bitmap,rnd.Next()%255);// random distribution
+                //spikes = Spikes(bitmap, reverse[scan]);// shortest uniform distribution
+                spikes = Spikes(bitmap, scan);// linear progression
             }
             else{
                 // display 64x64 grid 

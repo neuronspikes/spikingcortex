@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace SpikingNeurons
 {
@@ -18,6 +19,8 @@ namespace SpikingNeurons
     ///This software is licensed under the <a href="http://creativecommons.org/licenses/GPL/2.0/">CC-GNU GPL</a> version 2.0 or later.
     ///<!-- /Creative Commons License -->
     /// </summary>
+    [DataContract(Name = "Fibre", Namespace = "http://model.NeuronSpikes.org")]
+    [KnownType(typeof(SpikingNeuron))]
     public class Fibre
     {
         public Fibre()
@@ -31,12 +34,14 @@ namespace SpikingNeurons
         /// <summary>
         /// ReadOnly 
         /// </summary>
+        
         public string Name
         {
             get { return name; }
         }
+        [DataMember]
         protected string name;
-
+        
         protected int size;
         /// <summary>
         /// Limit the resources allocated to this Fibre.
@@ -47,6 +52,7 @@ namespace SpikingNeurons
         /// imposing reuse through natural selection in context of attrition
         /// or encouraging diversity in context of abundance.
         /// </summary>
+        [DataMember]
         public int SizeConstraint
         {
             get { return sizeConstraint; }
@@ -58,6 +64,7 @@ namespace SpikingNeurons
         /// characteristics of constituants neurons
         /// determines when spike occurs = state >= treshold
         /// </summary>
+        [DataMember]
         public double Treshold
         {
             get { return treshold; }
@@ -73,6 +80,7 @@ namespace SpikingNeurons
         /// What happen to the state when spiking
         /// Spike Effect is applied by multiplying state by this
         /// </summary>
+        [DataMember]
         public double SpikeEffect
         {
             get { return spikeEffect; }
@@ -90,6 +98,7 @@ namespace SpikingNeurons
         /// 1 = no leakage = static state
         /// 0 = total leakage = state lost instantly after frame processing
         /// </summary>
+        [DataMember]
         public double ExitationLeak
         {
             get { return exitationLeak; }
@@ -101,6 +110,7 @@ namespace SpikingNeurons
         }
         private double exitationLeak;
 
+        [DataMember]
         public double InhibitionLeak
         {
             get { return inhibitionLeak; }
@@ -112,7 +122,8 @@ namespace SpikingNeurons
         }
         private double inhibitionLeak;
 
-        protected List<SpikingNeuron> neurons;
+        [DataMember]
+        public List<SpikingNeuron> neurons;
         public IEnumerable<SpikingNeuron> Neurons
         {
             get { return neurons.AsEnumerable(); }

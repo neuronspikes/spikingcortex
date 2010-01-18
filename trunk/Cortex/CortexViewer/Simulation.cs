@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
+using System.Runtime.Serialization;
+using System.IO;
 using SpikingNeurons;
 
 namespace CortexViewer
@@ -11,6 +13,7 @@ namespace CortexViewer
     class Simulation
     {
         public bool stop = false; // true will stop "Live" thread
+        private bool busy = false;
         public int interval;
         public PictureNeuronFibreStates inputPicture, outputPicture;
         Thread simThread;
@@ -21,6 +24,9 @@ namespace CortexViewer
 
         private static int frameDrops = 0;
 
+        public DataContractSerializer fabricSerializer ;
+        
+        
         public Simulation(FabricViewer viewer)
         {
             this.viewer = viewer;
@@ -28,6 +34,15 @@ namespace CortexViewer
             fab = new Fabric("test");
             udpInput = new UDPSpikingInputs("testudp", 64*64, 12000);
             fab.connectInputFibre(udpInput);
+
+            List<Type> knownTypes = new List<Type>();
+            knownTypes.Add(typeof(SpikingNeuron));
+            knownTypes.Add(typeof(UDPSpikingInputs));
+            knownTypes.Add(typeof(UDPSpikingOutput));
+            knownTypes.Add(typeof(Fibre));
+            knownTypes.Add(typeof(string));
+            knownTypes.Add(typeof(double));
+            fabricSerializer = new DataContractSerializer(typeof(Fabric), knownTypes,int.MaxValue, false,true,null);
 
             // tuning for 8bit grayscalse picture
             udpInput.ExitationLeak = 254.0 / 256.0;
@@ -39,8 +54,8 @@ namespace CortexViewer
             outputPicture = new PictureNeuronFibreStates(64, 64, fab.Neurons);
 
             interval = 1; // pause between cycles (in mSec) 
-            simThread = new Thread(Live);
-            simThread.Start();
+            startProcessing();
+            udpInput.StartReceive();
         }
 
         public void Live()
@@ -62,12 +77,57 @@ namespace CortexViewer
 
         public void updateAllImages()
         {
-            inputPicture.updateImage();//.updateImageFromSpikes(fab.getInputFibre("testudp").Neurons);
-            outputPicture.updateImage();//.updateImageFromSpikes(fab.Outputs);
+            if (!busy)
+            {
+                inputPicture.updateImage();//.updateImageFromSpikes(fab.getInputFibre("testudp").Neurons);
+                outputPicture.updateImage();//.updateImageFromSpikes(fab.Outputs);
 
-            viewer.Msg.Content = "Neuron count : "+SpikingNeuron.Count+" Connexions = "+SpikingNeuron.Connexions+" Learning drops = "+Fabric.NotLearning+" Frame drops = "+frameDrops;
-            frameDrops=0;
-            Fabric.NotLearning = 0;
+                viewer.Msg.Content = "Neuron count : " + SpikingNeuron.Count + " Connexions = " + SpikingNeuron.Connexions + " Learning drops = " + Fabric.NotLearning + " Frame drops = " + frameDrops;
+                frameDrops = 0;
+                Fabric.NotLearning = 0;
+            }
+        }
+
+        public void saveFabric(string fileName){
+            busy = true;
+            viewer.Msg.Content = "Saving To " + fileName+"Please Wait!"; 
+            FileStream file = File.Create(fileName);
+            fabricSerializer.WriteObject(file,fab);
+            busy = false;
+        }
+
+        public void loadFabric(string fileName)
+        {
+            // stop evetrything
+            busy = true;
+            viewer.Msg.Content = "Loading from " + fileName + "Please Wait!"; 
+            udpInput.StopReceive();
+            stopProcessing();
+
+            // load and rebind
+            FileStream file = File.Open(fileName, FileMode.Open);
+            fab = (Fabric)fabricSerializer.ReadObject(file);
+            udpInput = (UDPSpikingInputs)fab.getInputFibre("testudp");
+            inputPicture = new PictureNeuronFibreStates(64, 64, udpInput.Neurons);
+            outputPicture = new PictureNeuronFibreStates(64, 64, fab.Neurons);
+
+            // restart processes
+            startProcessing();
+            udpInput.StartReceive();
+            busy = false;
+        }
+
+        public void stopProcessing()
+        {
+            stop = true;
+            if(simThread != null) simThread.Join();
+        }
+        public void startProcessing()
+        {
+            stopProcessing();
+            simThread = new Thread(Live);
+            stop = false;
+            simThread.Start();
         }
     }
 }

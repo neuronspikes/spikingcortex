@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace SpikingNeurons
 {
@@ -17,9 +18,15 @@ namespace SpikingNeurons
     ///<!-- /Creative Commons License -->
 
     /// </summary>
+    [DataContract(Name = "Neuron", Namespace = "http://model.NeuronSpikes.org")]
+    [KnownType(typeof(SpikingNeuron))]
+    [KnownType(typeof(double))]
     public class SpikingNeuron
     {
+        [DataMember]
         Fibre fibre;
+
+        [DataMember]
         Dictionary<SpikingNeuron, double> efferentSynapses;
 
         protected static long count=0;
@@ -58,6 +65,12 @@ namespace SpikingNeurons
             count++;
         }
 
+        /// <summary>
+        /// Used for deserialization
+        /// </summary>
+        private SpikingNeuron()
+        {
+        }
         /// <summary>
         /// Live!
         /// A slice of life to compute state.
@@ -247,8 +260,9 @@ namespace SpikingNeurons
             get { return spiked; }
         }
         private static int idCount;
+        [DataMember]
         private int id;
-
+        
         public int Id
         {
             get { return id; }

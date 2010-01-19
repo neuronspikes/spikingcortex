@@ -20,12 +20,6 @@ namespace SpikingNeurons
         UdpClient udpClient;
         IPEndPoint RemoteIpEndPoint;
 
-        public int Size
-        {
-            get { return size; }
-            set { size = value; }
-        }
-
         [DataMember]
         private double spikeWeight;
         public double SpikeWeight

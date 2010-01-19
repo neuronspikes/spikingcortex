@@ -59,8 +59,8 @@ namespace WindowsFormsApplication1
             List<int> spikes;
             if(bitmap!=null){
                 //spikes = Spikes(bitmap,rnd.Next()%255);// random distribution
-                //spikes = Spikes(bitmap, reverse[scan]);// shortest uniform distribution
-                spikes = Spikes(bitmap, scan);// linear progression
+                spikes = Spikes(bitmap, reverse[scan]);// shortest uniform distribution
+                //spikes = Spikes(bitmap, scan);// linear progression
             }
             else{
                 // display 64x64 grid 

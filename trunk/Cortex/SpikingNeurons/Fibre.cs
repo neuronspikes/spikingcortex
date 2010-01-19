@@ -41,8 +41,14 @@ namespace SpikingNeurons
         }
         [DataMember]
         protected string name;
-        
+
+        [DataMember]
         protected int size;
+        public int Size
+        {
+            get { return size; }
+            set { size = value; }
+        }
         /// <summary>
         /// Limit the resources allocated to this Fibre.
         /// This is the maximum number of neuron this Fibre can handle.

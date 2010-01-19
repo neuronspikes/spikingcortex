@@ -105,11 +105,17 @@ namespace CortexViewer
             stopProcessing();
 
             // load and rebind
-            FileStream file = File.Open(fileName, FileMode.Open);
-            fab = (Fabric)fabricSerializer.ReadObject(file);
-            udpInput = (UDPSpikingInputs)fab.getInputFibre("testudp");
-            inputPicture = new PictureNeuronFibreStates(64, 64, udpInput.Neurons);
-            outputPicture = new PictureNeuronFibreStates(64, 64, fab.Neurons);
+            try
+            {
+                FileStream file = File.Open(fileName, FileMode.Open);
+                fab = (Fabric)fabricSerializer.ReadObject(file);
+                udpInput = (UDPSpikingInputs)fab.getInputFibre("testudp");
+                inputPicture = new PictureNeuronFibreStates(64, 64, udpInput.Neurons);
+                outputPicture = new PictureNeuronFibreStates(64, 64, fab.Neurons);
+            }
+            catch (System.IO.IOException) { 
+            // TODO: Show error
+            }
 
             // restart processes
             startProcessing();

@@ -12,13 +12,16 @@ namespace SpikingNeurons
     [DataContract(Name = "UDPInput", Namespace = "http://model.NeuronSpikes.org")]
     public class UDPSpikingInputs : Fibre
     {
-        private bool canReceive = false;
+        [DataMember]
+        int neuronsPerPort;
+        
+        [DataMember]
+        int lowerPort;
 
         [DataMember]
-        int port;
+        int higherPort;
 
-        UdpClient udpClient;
-        IPEndPoint RemoteIpEndPoint;
+        private List<UDPReceivePortHandler> portHandlers;
 
         [DataMember]
         private double spikeWeight;
@@ -28,68 +31,54 @@ namespace SpikingNeurons
             set { spikeWeight = value; }
         }
 
-        public UDPSpikingInputs(string name, int size, int port)
+        public UDPSpikingInputs(string name, int size,double spikeWeight, int neuronsPerPort, int lowerPort,int higherPort)
         {
-            this.size = size;
+            //validate sizing
+            int fibreRepresented = (higherPort - lowerPort) * neuronsPerPort;
+
+            if (fibreRepresented < size) Console.WriteLine("WARNING : Fibre " + this.Name + " on ports " + lowerPort + "-" + higherPort + " have " + (size - fibreRepresented) + " unused input neurons.");
+            if (fibreRepresented > size) Console.WriteLine("WARNING : Fibre " + this.Name + " on ports " + lowerPort + "-" + higherPort + " may receive unmapped spikes. " + (fibreRepresented - size) + " input neurons missings.");
+
+            //initialize 
             this.name = name;
+            this.size = size;
+            this.spikeWeight = spikeWeight;
+
             neurons = new List<SpikingNeuron>();
             for (int i = 0; i < size; i++)
             {
                 lock(neurons) neurons.Add(new SpikingNeuron(this));
             }
-            this.port = port;
+
+            this.neuronsPerPort = neuronsPerPort;
+            this.lowerPort = lowerPort;
+            this.higherPort = higherPort;
+
+            StartReception();
         }
 
-        public void StartReceive()
+        public void StartReception()
         {
-            canReceive = true;
-            if (RemoteIpEndPoint == null || udpClient == null)
+            if (portHandlers == null)
             {
-                //IPEndPoint object will allow us to read datagrams sent from any source.
-                RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, port);
-                // Receive a message and write it to the console.
-                udpClient = new UdpClient(RemoteIpEndPoint);
-            }
-            udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), this);
-        }
-
-        public void StopReceive()
-        {
-            canReceive = false;
-            udpClient.Close();
-        }
-
-        public static bool messageReceived = false;
-
-        public static void ReceiveCallback(IAsyncResult ar)
-        {
-
-
-            UDPSpikingInputs usi = (UDPSpikingInputs)(ar.AsyncState);
-            UdpClient u = usi.udpClient;
-
-            if (u.Client != null)
-            {
-                IPEndPoint e = usi.RemoteIpEndPoint;
-
-                try
+                portHandlers = new List<UDPReceivePortHandler>();
+                int neuronOffset = 0;
+                for (int port = lowerPort; port <= higherPort; port++)
                 {
-                    Byte[] receiveBytes = u.EndReceive(ar, ref e);
-
-                    usi.interpretStreamAsDeltas(receiveBytes);
-
-                    // Prepare for next shot
-                    if (usi.canReceive) usi.udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), usi);
-                }
-                catch (ObjectDisposedException)
-                {
+                    portHandlers.Add(new UDPReceivePortHandler(port, neuronOffset, this));
+                    neuronOffset += neuronsPerPort;
                 }
             }
+            foreach (UDPReceivePortHandler ph in portHandlers) ph.Start();
         }
 
-        public void interpretStreamAsDeltas(Byte[] receiveBytes)
+        public void StopReception()
         {
-            int count = 0;
+            foreach(UDPReceivePortHandler ph in portHandlers) ph.Stop();
+        }
+
+        public void interpretStreamAsDeltas(int offset, Byte[] receiveBytes)
+        {
             int adrs = 0;
             // interpret data as spike adress deltas
             foreach (byte code in receiveBytes)
@@ -103,22 +92,21 @@ namespace SpikingNeurons
                     adrs += code; // since zero have a meaning...
                     if (adrs < size)
                         neurons[adrs - 1].addCharge(spikeWeight); // trigger spike
-                    count++;
                 }
             }
         }
-        public void interpretStreamAs8bitAdresses(Byte[] receiveBytes)
+        public void interpretStreamAs8bitAdresses(int offset, Byte[] receiveBytes)
         {
             // interpret data as 8 bit spike adress (intensive action 0-255 range)
             foreach (byte code in receiveBytes)
             {
-                SpikingNeuron t = neurons[code];
+                SpikingNeuron t = neurons[offset+code];
 
                 t.addCharge(spikeWeight); // trigger spike
             }
         }
 
-        public void interpretStreamAsPowers(Byte[] receiveBytes)
+        public void interpretStreamAsPowers(int offset, Byte[] receiveBytes)
         {
             // interpret stream as intensity => number of spikes per frame (very intensive action on all SpikingThings)
             int adrs = 0;
@@ -127,7 +115,7 @@ namespace SpikingNeurons
             {
                 if (adrs < maxAdrs)
                 {
-                    SpikingNeuron t = neurons[adrs++];
+                    SpikingNeuron t = neurons[offset + adrs++];
 
                     for (byte pow = 0; pow < code; pow++)
                         t.addCharge(spikeWeight); // trigger spike
@@ -136,4 +124,63 @@ namespace SpikingNeurons
         }
     }
 
+    class UDPReceivePortHandler
+    {
+        // configuration
+        int port;
+        int neuronAddressOffset;
+        UDPSpikingInputs usi;
+
+        AsyncCallback callBack;
+        bool canReceive = false;
+
+        private UdpClient udpClient;
+        private IPEndPoint remoteIpEndPoint;
+
+        public UDPReceivePortHandler(int port, int neuronAddressOffset, UDPSpikingInputs usi)
+        {
+            this.port = port;
+            this.neuronAddressOffset = neuronAddressOffset;
+            this.usi = usi;
+
+            udpClient = new UdpClient(port);
+            remoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+
+            callBack = new AsyncCallback(ReceiveCallback);
+        }
+
+        public void Start(){
+            canReceive = true;
+            udpClient.BeginReceive(callBack, this);
+        }
+
+        public void Stop()
+        {
+            canReceive = false;
+            udpClient.Close();
+        }
+
+
+        public void ReceiveCallback(IAsyncResult ar)
+        {
+            UDPReceivePortHandler ph = (UDPReceivePortHandler)(ar.AsyncState);
+            if (ph.udpClient != null)
+            {
+                IPEndPoint e = ph.remoteIpEndPoint;
+
+                try
+                {
+                    Byte[] receivedBytes = ph.udpClient.EndReceive(ar, ref e);
+
+                    usi.interpretStreamAsDeltas(ph.neuronAddressOffset, receivedBytes);
+
+                    // Prepare for next shot
+                    if (ph.canReceive) ph.udpClient.BeginReceive(callBack, ph);
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+            }
+        }
+    }
 }

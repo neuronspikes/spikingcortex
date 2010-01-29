@@ -32,7 +32,7 @@ namespace CortexViewer
             this.viewer = viewer;
 
             fab = new Fabric("test");
-            udpInput = new UDPSpikingInputs("testudp", 64*64, 12000);
+            udpInput = new UDPSpikingInputs("testudp", 128 * 128, 64.0 / 256.0, 8000, 12000, 12000+8);
             fab.connectInputFibre(udpInput);
 
             List<Type> knownTypes = new List<Type>();
@@ -46,16 +46,14 @@ namespace CortexViewer
 
             // tuning for 8bit grayscalse picture
             udpInput.ExitationLeak = 254.0 / 256.0;
-            udpInput.SpikeWeight = 64.0 /256.0;
-
             fab.ExitationLeak = 254.0 / 256.0;
 
-            inputPicture = new PictureNeuronFibreStates(64, 64, udpInput.Neurons);
+            inputPicture = new PictureNeuronFibreStates(128, 128, udpInput.Neurons);
             outputPicture = new PictureNeuronFibreStates(64, 64, fab.Neurons);
 
             interval = 1; // pause between cycles (in mSec) 
             startProcessing();
-            udpInput.StartReceive();
+            udpInput.StartReception();
         }
 
         public void Live()
@@ -101,7 +99,7 @@ namespace CortexViewer
             // stop evetrything
             busy = true;
             viewer.Msg.Content = "Loading from " + fileName + "Please Wait!"; 
-            udpInput.StopReceive();
+            udpInput.StopReception();
             stopProcessing();
 
             // load and rebind
@@ -110,7 +108,7 @@ namespace CortexViewer
                 FileStream file = File.Open(fileName, FileMode.Open);
                 fab = (Fabric)fabricSerializer.ReadObject(file);
                 udpInput = (UDPSpikingInputs)fab.getInputFibre("testudp");
-                inputPicture = new PictureNeuronFibreStates(64, 64, udpInput.Neurons);
+                inputPicture = new PictureNeuronFibreStates(128, 128, udpInput.Neurons);
                 outputPicture = new PictureNeuronFibreStates(64, 64, fab.Neurons);
             }
             catch (System.IO.IOException) { 
@@ -119,7 +117,7 @@ namespace CortexViewer
 
             // restart processes
             startProcessing();
-            udpInput.StartReceive();
+            udpInput.StartReception();
             busy = false;
         }
 

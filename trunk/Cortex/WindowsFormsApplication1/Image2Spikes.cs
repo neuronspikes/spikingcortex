@@ -6,19 +6,11 @@ using System.Threading;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using System.Net;
-using System.Net.Sockets;
-using System.Net.NetworkInformation;
 
 namespace WindowsFormsApplication1
 {
     class Image2Spikes
     {
-
-        private UdpClient udpClient;
-        private int bufsize;
-        private static Bitmap bmp;
-        private PictureBox bitmap;
         private int scan = 0;
         Random rnd;
         public static byte[] reverse ={
@@ -40,18 +32,13 @@ namespace WindowsFormsApplication1
                                0x0F,0x8F,0x4F,0xCF,0x2F,0xAF,0x6F,0xEF,0x1F,0x9F,0x5F,0xDF,0x3F,0xBF,0x7F,0xFF,
                                };
 
-        public Image2Spikes(PictureBox bitmap, UdpClient udpClient)
+        public Image2Spikes()
         {
-            this.bitmap = bitmap;
-            this.udpClient = udpClient;
-            bufsize = udpClient.Client.SendBufferSize;  // Maximum Transmission Unit of UDP sockets
             rnd = new Random();
 
-            Console.WriteLine("Soft MTU=" + bufsize);
-            bmp = new Bitmap("c:\\Users\\sdenis\\Pictures\\any-key-gray-64x64.bmp");
         }
 
-        public void SendImage()
+        public List<int> getSpikesFromImage(Bitmap bitmap)// pass null for test grid
         {
 
             // transmit the bitmap as a evenly distributed sequence of packets (retinal neuron spikes)
@@ -68,55 +55,22 @@ namespace WindowsFormsApplication1
                 for (int y = 0; y < 64; y++)
                     for (int x = 0; x < 64; x += (y%8==0?1:8)) spikes.Add(x+y*64);
             }
-            transmitAsDeltasUDPStream(spikes);
+
             scan++;
             scan %= 256;
-
+            return spikes;
         }
 
-        public void transmitAsDeltasUDPStream(List<int> spikes)
-        {
-            List<byte> stream = new List<byte>();
-            int streamIndex = 0;
 
-            foreach (int spikeAdrs in spikes)
-            {
-                int offset = (spikeAdrs + 1) - streamIndex;
 
-                while (offset > 255)
-                {
-                    if (stream.Count < bufsize)
-                    {
-                        stream.Add(0);
-                    }
-                    else break;
-                    streamIndex += 255;
-                    offset = (spikeAdrs + 1) - streamIndex;
-
-                }
-                if (offset == 0 || offset > 255) throw new Exception("transmitAsDeltasUDPStream error in streaming algorithm.");
-                if (stream.Count < bufsize)
-                    stream.Add((byte)offset);
-                else
-                {
-                    int dropped = spikes.Count - bufsize;
-                    Console.WriteLine("(Spikes)" + spikes.Count + " @ " + streamIndex + " - (MTU)" + bufsize + " = " + dropped + " spikes dropped.");
-                    break;
-                }
-                streamIndex += offset;
-
-            }
-            udpClient.Send(stream.ToArray(), stream.Count);
-        }
-
-        public static List<int> Spikes(PictureBox src, int treshold)
+        public static List<int> Spikes(Bitmap bmp, int treshold)
         // Returns the list of neurons(=pixels) that exceeds the treshold
         {
             List<int> spikes = new List<int>();
 
 
             Rectangle srcRect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            BitmapData sight = bmp.LockBits(srcRect, ImageLockMode.ReadWrite, src.Image.PixelFormat);
+            BitmapData sight = bmp.LockBits(srcRect, ImageLockMode.ReadWrite, bmp.PixelFormat);
 
             // process
             int PixelSize = 4;

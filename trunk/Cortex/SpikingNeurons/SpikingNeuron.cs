@@ -219,7 +219,7 @@ namespace SpikingNeurons
                                 connexions++;
 
                             }
-                            catch (System.ArgumentException e)
+                            catch (System.ArgumentException)
                             {
                                 Console.WriteLine("WARNING : updateConcurrencyRelations on neuron "+this.Id+" - efferent synapse already contains this new target.");
                             }

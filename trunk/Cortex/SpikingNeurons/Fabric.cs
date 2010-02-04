@@ -112,26 +112,20 @@ namespace SpikingNeurons
         /// <returns>Set of neurons who spiked in this slice of life.</returns>
         public void processAndSee()
         {
-            previouslySpiked = new List<SpikingNeuron>();
+            previouslySpiked = (newlySpiked !=null? newlySpiked : new List<SpikingNeuron>());
             newlySpiked = new List<SpikingNeuron>(); 
 
 
             // compute state and action lists
             foreach (SpikingNeuron n in workingSet)
             {
-                if (n.Spiked)
-                {
-                    // did spike last turn
-                    previouslySpiked.Add(n);
-
-                }
                 if (n.processAndSee())
                 {
                     newlySpiked.Add(n);
                 }
             }
 
-            // process efferent synapses 
+            // process efferent synapses , to preserve frame integrity, this process cannot be merged with the scan above
 
             foreach (SpikingNeuron n in newlySpiked)
             {

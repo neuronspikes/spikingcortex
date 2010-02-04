@@ -99,15 +99,10 @@ namespace WindowsFormsApplication1
                             offset = (spikeAdrs + 1) - streamIndex;
 
                         }
-                        if (offset == 0 || offset > 255) throw new Exception("transmitAsDeltasUDPStream error in streaming algorithm.");
-                        if (stream.Count < port.NeuronAddressOffset+port.NeuronsPerPort)
-                            stream.Add((byte)offset);
-                        else
-                        {
-                            int dropped = spikes.Count - (port.NeuronAddressOffset+port.NeuronsPerPort);
-                            Console.WriteLine("Insufficient transmission space " + spikes.Count + " spikes dropped.");
-                            break;
-                        }
+                        if (offset == 0 || offset > 255) 
+                            throw new Exception("transmitAsDeltasUDPStream error in streaming algorithm.");
+
+                        stream.Add((byte)offset);
                         streamIndex += offset;
                     }
                     port.send(stream);

@@ -1,0 +1,1 @@
+Experimental spiking neural networks in .Net
